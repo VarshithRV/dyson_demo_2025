@@ -29,14 +29,25 @@
 # Author: Denis Stogl
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
+from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.conditions import IfCondition, UnlessCondition
+from launch.substitutions import (
+    AndSubstitution,
+    Command,
+    FindExecutable,
+    LaunchConfiguration,
+    NotSubstitution,
+    PathJoinSubstitution,
+)
+
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare, FindPackage
-from launch_ros.parameter_descriptions import ParameterValue
+from launch_ros.parameter_descriptions import ParameterFile, ParameterValue
 
 
-def launch_setup():
+
+
+def launch_setup(context, *args, **kwargs):
     
     description_package = LaunchConfiguration("description_package")
     description_file = LaunchConfiguration("description_file")
@@ -174,7 +185,7 @@ def launch_setup():
             left_safety_k_position,
             " ",
             "left_name:=",
-            left_ur_type,
+            "left_ur16e",
             " ",
             "left_script_filename:=",
             left_script_filename,
@@ -258,7 +269,7 @@ def launch_setup():
             right_safety_k_position,
             " ",
             "right_name:=",
-            right_ur_type,
+            "right_ur16e",
             " ",
             "right_script_filename:=",
             right_script_filename,
@@ -323,16 +334,360 @@ def launch_setup():
     robot_description = {
         "robot_description": ParameterValue(value=robot_description_content, value_type=str)
     }
-
     rviz_config_file = PathJoinSubstitution(
         [FindPackageShare(description_package), "rviz", "view_robot.rviz"]
     )
 
-    joint_state_publisher_node = Node(
-        package="joint_state_publisher_gui",
-        executable="joint_state_publisher_gui",
+    left_initial_joint_controllers = PathJoinSubstitution(
+        [FindPackageShare(runtime_config_package), "config", left_controllers_file]
     )
-    
+    # define update rate
+    left_update_rate_config_file = PathJoinSubstitution(
+        [
+            FindPackageShare(runtime_config_package),
+            "config",
+            left_ur_type.perform(context) + "_update_rate.yaml",
+        ]
+    )
+    right_initial_joint_controllers = PathJoinSubstitution(
+        [FindPackageShare(runtime_config_package), "config", right_controllers_file]
+    )
+    # define update rate
+    right_update_rate_config_file = PathJoinSubstitution(
+        [
+            FindPackageShare(runtime_config_package),
+            "config",
+            right_ur_type.perform(context) + "_update_rate.yaml",
+        ]
+    )
+
+    # -----------------------------
+    # LEFT ARM NODES  (namespace: left)
+    # -----------------------------
+    left_control_node = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        namespace="left",
+        parameters=[
+            robot_description,
+            left_update_rate_config_file,
+            ParameterFile(left_initial_joint_controllers, allow_substs=True),
+        ],
+        output="screen",
+        condition=IfCondition(use_fake_hardware),
+    )
+
+    left_ur_control_node = Node(
+        package="ur_robot_driver",
+        executable="ur_ros2_control_node",
+        namespace="left",
+        parameters=[
+            robot_description,
+            left_update_rate_config_file,
+            ParameterFile(left_initial_joint_controllers, allow_substs=True),
+        ],
+        output="screen",
+        condition=UnlessCondition(use_fake_hardware),
+    )
+
+    left_dashboard_client_node = Node(
+        package="ur_robot_driver",
+        condition=IfCondition(
+            AndSubstitution(left_launch_dashboard_client, NotSubstitution(use_fake_hardware))
+        ),
+        executable="dashboard_client",
+        name="dashboard_client",
+        namespace="left",
+        output="screen",
+        emulate_tty=True,
+        parameters=[{"robot_ip": left_robot_ip}],
+    )
+
+    left_robot_state_helper_node = Node(
+        package="ur_robot_driver",
+        executable="robot_state_helper",
+        name="ur_robot_state_helper",
+        namespace="left",
+        output="screen",
+        condition=UnlessCondition(use_fake_hardware),
+        parameters=[
+            {"headless_mode": headless_mode},
+            {"robot_ip": left_robot_ip},
+        ],
+    )
+
+    left_tool_communication_node = Node(
+        package="ur_robot_driver",
+        condition=IfCondition(left_use_tool_communication),
+        executable="tool_communication.py",
+        name="ur_tool_comm",
+        namespace="left",
+        output="screen",
+        parameters=[
+            {
+                "robot_ip": left_robot_ip,
+                "tcp_port": left_tool_tcp_port,
+                "device_name": left_tool_device_name,
+            }
+        ],
+    )
+
+    left_urscript_interface = Node(
+        package="ur_robot_driver",
+        executable="urscript_interface",
+        namespace="left",
+        parameters=[{"robot_ip": left_robot_ip}],
+        output="screen",
+    )
+
+    left_controller_stopper_node = Node(
+        package="ur_robot_driver",
+        executable="controller_stopper_node",
+        name="controller_stopper",
+        namespace="left",
+        output="screen",
+        emulate_tty=True,
+        condition=UnlessCondition(use_fake_hardware),
+        parameters=[
+            {"headless_mode": headless_mode},
+            {"joint_controller_active": left_activate_joint_controller},
+            {
+                "consistent_controllers": [
+                    "io_and_status_controller",
+                    "force_torque_sensor_broadcaster",
+                    "joint_state_broadcaster",
+                    "speed_scaling_state_broadcaster",
+                    "tcp_pose_broadcaster",
+                    "ur_configuration_controller",
+                ]
+            },
+        ],
+    )
+
+    left_trajectory_until_node = Node(
+        package="ur_robot_driver",
+        executable="trajectory_until_node",
+        name="trajectory_until_node",
+        namespace="left",
+        output="screen",
+        parameters=[
+            {
+                "motion_controller_uri": f"/left/{left_initial_joint_controller.perform(context)}/follow_joint_trajectory",
+                "until_action_uri": "tool_contact_controller/detect_tool_contact",
+            },
+        ],
+    )
+
+    def left_controller_spawner(controllers, active=True):
+        inactive_flags = ["--inactive"] if not active else []
+        return Node(
+            package="controller_manager",
+            executable="spawner",
+            namespace="left",
+            arguments=[
+                "--controller-manager",
+                "/left/controller_manager",
+                "--controller-manager-timeout",
+                left_controller_spawner_timeout,
+            ]
+            + inactive_flags
+            + controllers,
+        )
+
+    left_controllers_active = [
+        "joint_state_broadcaster",
+        "io_and_status_controller",
+        "speed_scaling_state_broadcaster",
+        "force_torque_sensor_broadcaster",
+        "tcp_pose_broadcaster",
+        "ur_configuration_controller",
+    ]
+    left_controllers_inactive = [
+        "scaled_joint_trajectory_controller",
+        "joint_trajectory_controller",
+        "forward_velocity_controller",
+        "forward_position_controller",
+        "forward_effort_controller",
+        "force_mode_controller",
+        "passthrough_trajectory_controller",
+        "freedrive_mode_controller",
+        "tool_contact_controller",
+    ]
+
+    if left_activate_joint_controller.perform(context) == "true":
+        left_controllers_active.append(left_initial_joint_controller.perform(context))
+        left_controllers_inactive.remove(left_initial_joint_controller.perform(context))
+
+    if use_fake_hardware.perform(context) == "true":
+        left_controllers_active.remove("tcp_pose_broadcaster")
+
+    left_controller_spawners = [
+        left_controller_spawner(left_controllers_active),
+        left_controller_spawner(left_controllers_inactive, active=False),
+    ]
+
+    right_control_node = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        namespace="right",
+        parameters=[
+            robot_description,
+            right_update_rate_config_file,
+            ParameterFile(right_initial_joint_controllers, allow_substs=True),
+        ],
+        output="screen",
+        condition=IfCondition(use_fake_hardware),
+    )
+
+    right_ur_control_node = Node(
+        package="ur_robot_driver",
+        executable="ur_ros2_control_node",
+        namespace="right",
+        parameters=[
+            robot_description,
+            right_update_rate_config_file,
+            ParameterFile(right_initial_joint_controllers, allow_substs=True),
+        ],
+        output="screen",
+        condition=UnlessCondition(use_fake_hardware),
+    )
+
+    right_dashboard_client_node = Node(
+        package="ur_robot_driver",
+        condition=IfCondition(
+            AndSubstitution(right_launch_dashboard_client, NotSubstitution(use_fake_hardware))
+        ),
+        executable="dashboard_client",
+        name="dashboard_client",
+        namespace="right",
+        output="screen",
+        emulate_tty=True,
+        parameters=[{"robot_ip": right_robot_ip}],
+    )
+
+    right_robot_state_helper_node = Node(
+        package="ur_robot_driver",
+        executable="robot_state_helper",
+        name="ur_robot_state_helper",
+        namespace="right",
+        output="screen",
+        condition=UnlessCondition(use_fake_hardware),
+        parameters=[
+            {"headless_mode": headless_mode},
+            {"robot_ip": right_robot_ip},
+        ],
+    )
+
+    right_tool_communication_node = Node(
+        package="ur_robot_driver",
+        condition=IfCondition(right_use_tool_communication),
+        executable="tool_communication.py",
+        name="ur_tool_comm",
+        namespace="right",
+        output="screen",
+        parameters=[
+            {
+                "robot_ip": right_robot_ip,
+                "tcp_port": right_tool_tcp_port,
+                "device_name": right_tool_device_name,
+            }
+        ],
+    )
+
+    right_urscript_interface = Node(
+        package="ur_robot_driver",
+        executable="urscript_interface",
+        namespace="right",
+        parameters=[{"robot_ip": right_robot_ip}],
+        output="screen",
+    )
+
+    right_controller_stopper_node = Node(
+        package="ur_robot_driver",
+        executable="controller_stopper_node",
+        name="controller_stopper",
+        namespace="right",
+        output="screen",
+        emulate_tty=True,
+        condition=UnlessCondition(use_fake_hardware),
+        parameters=[
+            {"headless_mode": headless_mode},
+            {"joint_controller_active": right_activate_joint_controller},
+            {
+                "consistent_controllers": [
+                    "io_and_status_controller",
+                    "force_torque_sensor_broadcaster",
+                    "joint_state_broadcaster",
+                    "speed_scaling_state_broadcaster",
+                    "tcp_pose_broadcaster",
+                    "ur_configuration_controller",
+                ]
+            },
+        ],
+    )
+
+    right_trajectory_until_node = Node(
+        package="ur_robot_driver",
+        executable="trajectory_until_node",
+        name="trajectory_until_node",
+        namespace="right",
+        output="screen",
+        parameters=[
+            {
+                "motion_controller_uri": f"/right/{right_initial_joint_controller.perform(context)}/follow_joint_trajectory",
+                "until_action_uri": "tool_contact_controller/detect_tool_contact",
+            },
+        ],
+    )
+
+    def right_controller_spawner(controllers, active=True):
+        inactive_flags = ["--inactive"] if not active else []
+        return Node(
+            package="controller_manager",
+            executable="spawner",
+            namespace="right",
+            arguments=[
+                "--controller-manager",
+                "/right/controller_manager",
+                "--controller-manager-timeout",
+                right_controller_spawner_timeout,
+            ]
+            + inactive_flags
+            + controllers,
+        )
+
+    right_controllers_active = [
+        "joint_state_broadcaster",
+        "io_and_status_controller",
+        "speed_scaling_state_broadcaster",
+        "force_torque_sensor_broadcaster",
+        "tcp_pose_broadcaster",
+        "ur_configuration_controller",
+    ]
+    right_controllers_inactive = [
+        "scaled_joint_trajectory_controller",
+        "joint_trajectory_controller",
+        "forward_velocity_controller",
+        "forward_position_controller",
+        "forward_effort_controller",
+        "force_mode_controller",
+        "passthrough_trajectory_controller",
+        "freedrive_mode_controller",
+        "tool_contact_controller",
+    ]
+
+    if right_activate_joint_controller.perform(context) == "true":
+        right_controllers_active.append(right_initial_joint_controller.perform(context))
+        right_controllers_inactive.remove(right_initial_joint_controller.perform(context))
+
+    if use_fake_hardware.perform(context) == "true":
+        right_controllers_active.remove("tcp_pose_broadcaster")
+
+    right_controller_spawners = [
+        right_controller_spawner(right_controllers_active),
+        right_controller_spawner(right_controllers_inactive, active=False),
+    ]
+
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
@@ -342,18 +697,57 @@ def launch_setup():
 
     rviz_node = Node(
         package="rviz2",
+        condition=IfCondition(launch_rviz),
         executable="rviz2",
         name="rviz2",
         output="log",
         arguments=["-d", rviz_config_file],
     )
+ 
+    left_joint_state_relay = Node(
+        package="topic_tools",
+        executable="relay",
+        name="relay_left_joint_states",
+        arguments=["/left/joint_states", "/joint_states"],
+        output="screen",
+    )
+
+    right_joint_state_relay = Node(
+        package="topic_tools",
+        executable="relay",
+        name="relay_right_joint_states",
+        arguments=["/right/joint_states", "/joint_states"],
+        output="screen",
+    )
 
     nodes_to_start = [
-        joint_state_publisher_node,
+        
+        left_control_node,
+        left_ur_control_node,
+        left_dashboard_client_node,
+        left_robot_state_helper_node,
+        left_tool_communication_node,
+        left_controller_stopper_node,
+        left_urscript_interface,
+        left_trajectory_until_node,
+        
+        right_control_node,
+        right_ur_control_node,
+        right_dashboard_client_node,
+        right_robot_state_helper_node,
+        right_tool_communication_node,
+        right_controller_stopper_node,
+        right_urscript_interface,
+        right_trajectory_until_node,
+        
+        left_joint_state_relay,
+        right_joint_state_relay,
+
         robot_state_publisher_node,
         rviz_node,
-    ]
-    return nodes_to_start
+    ] + left_controller_spawners + right_controller_spawners
+
+    return nodes_to_start 
 
 
 def generate_launch_description():
@@ -852,6 +1246,5 @@ def generate_launch_description():
             description="Port that will be opened for trajectory control.",
         )
     )
-
-    nodes_to_start = launch_setup()
-    return LaunchDescription(declared_arguments + nodes_to_start)
+    
+    return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])

@@ -12,6 +12,7 @@ find_package(robot_state_publisher REQUIRED)
 find_package(rviz2 REQUIRED)
 find_package(ur_client_library REQUIRED)
 find_package(dual_arm_workcell_description REQUIRED)
+find_package(topic_tools REQUIRED)
 
 install(
   DIRECTORY launch config
