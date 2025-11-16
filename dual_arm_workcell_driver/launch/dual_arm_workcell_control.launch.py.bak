@@ -1,0 +1,962 @@
+# dual_arm_workcell_control.launch.py
+
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.conditions import IfCondition, UnlessCondition
+from launch.substitutions import (
+    AndSubstitution,
+    Command,
+    FindExecutable,
+    LaunchConfiguration,
+    NotSubstitution,
+    PathJoinSubstitution,
+)
+
+from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterFile, ParameterValue
+from launch_ros.substitutions import FindPackageShare
+
+
+def launch_setup(context, *args, **kwargs):
+    # ----------------------------------------------------------------------
+    # Launch configurations (left & right, plus shared)
+    # ----------------------------------------------------------------------
+    left_ur_type = LaunchConfiguration("left_ur_type")
+    right_ur_type = LaunchConfiguration("right_ur_type")
+
+    left_robot_ip = LaunchConfiguration("left_robot_ip")
+    right_robot_ip = LaunchConfiguration("right_robot_ip")
+
+    left_tf_prefix = LaunchConfiguration("left_tf_prefix")
+    right_tf_prefix = LaunchConfiguration("right_tf_prefix")
+
+    left_safety_limits = LaunchConfiguration("left_safety_limits")
+    left_safety_pos_margin = LaunchConfiguration("left_safety_pos_margin")
+    left_safety_k_position = LaunchConfiguration("left_safety_k_position")
+
+    right_safety_limits = LaunchConfiguration("right_safety_limits")
+    right_safety_pos_margin = LaunchConfiguration("right_safety_pos_margin")
+    right_safety_k_position = LaunchConfiguration("right_safety_k_position")
+
+    runtime_config_package = LaunchConfiguration("runtime_config_package")
+    controllers_file = LaunchConfiguration("controllers_file")
+
+    description_package = LaunchConfiguration("description_package")
+    description_file = LaunchConfiguration("description_file")
+
+    left_kinematics_params_file = LaunchConfiguration("left_kinematics_params_file")
+    right_kinematics_params_file = LaunchConfiguration("right_kinematics_params_file")
+
+    use_fake_hardware = LaunchConfiguration("use_fake_hardware")
+    fake_sensor_commands = LaunchConfiguration("fake_sensor_commands")
+    headless_mode = LaunchConfiguration("headless_mode")
+
+    controller_spawner_timeout = LaunchConfiguration("controller_spawner_timeout")
+    initial_joint_controller = LaunchConfiguration("initial_joint_controller")
+    activate_joint_controller = LaunchConfiguration("activate_joint_controller")
+    launch_rviz = LaunchConfiguration("launch_rviz")
+    launch_dashboard_client = LaunchConfiguration("launch_dashboard_client")
+
+    use_tool_communication = LaunchConfiguration("use_tool_communication")
+    tool_parity = LaunchConfiguration("tool_parity")
+    tool_baud_rate = LaunchConfiguration("tool_baud_rate")
+    tool_stop_bits = LaunchConfiguration("tool_stop_bits")
+    tool_rx_idle_chars = LaunchConfiguration("tool_rx_idle_chars")
+    tool_tx_idle_chars = LaunchConfiguration("tool_tx_idle_chars")
+    tool_device_name = LaunchConfiguration("tool_device_name")
+    tool_voltage = LaunchConfiguration("tool_voltage")
+
+    reverse_ip = LaunchConfiguration("reverse_ip")  # shared IP, different ports per arm
+
+    # LEFT ports
+    left_script_command_port = LaunchConfiguration("left_script_command_port")
+    left_reverse_port = LaunchConfiguration("left_reverse_port")
+    left_script_sender_port = LaunchConfiguration("left_script_sender_port")
+    left_trajectory_port = LaunchConfiguration("left_trajectory_port")
+    left_tool_tcp_port = LaunchConfiguration("left_tool_tcp_port")
+
+    # RIGHT ports
+    right_script_command_port = LaunchConfiguration("right_script_command_port")
+    right_reverse_port = LaunchConfiguration("right_reverse_port")
+    right_script_sender_port = LaunchConfiguration("right_script_sender_port")
+    right_trajectory_port = LaunchConfiguration("right_trajectory_port")
+    right_tool_tcp_port = LaunchConfiguration("right_tool_tcp_port")
+
+    # ----------------------------------------------------------------------
+    # Config files & scripts
+    # ----------------------------------------------------------------------
+    initial_joint_controllers = PathJoinSubstitution(
+        [FindPackageShare(runtime_config_package), "config", controllers_file]
+    )
+
+    left_update_rate_config_file = PathJoinSubstitution(
+        [
+            FindPackageShare(runtime_config_package),
+            "config",
+            left_ur_type.perform(context) + "_update_rate.yaml",
+        ]
+    )
+    right_update_rate_config_file = PathJoinSubstitution(
+        [
+            FindPackageShare(runtime_config_package),
+            "config",
+            right_ur_type.perform(context) + "_update_rate.yaml",
+        ]
+    )
+
+    left_joint_limit_params = PathJoinSubstitution(
+        [FindPackageShare(description_package), "config", left_ur_type, "joint_limits.yaml"]
+    )
+    left_physical_params = PathJoinSubstitution(
+        [FindPackageShare(description_package), "config", left_ur_type, "physical_parameters.yaml"]
+    )
+    left_visual_params = PathJoinSubstitution(
+        [FindPackageShare(description_package), "config", left_ur_type, "visual_parameters.yaml"]
+    )
+
+    right_joint_limit_params = PathJoinSubstitution(
+        [FindPackageShare(description_package), "config", right_ur_type, "joint_limits.yaml"]
+    )
+    right_physical_params = PathJoinSubstitution(
+        [FindPackageShare(description_package), "config", right_ur_type, "physical_parameters.yaml"]
+    )
+    right_visual_params = PathJoinSubstitution(
+        [FindPackageShare(description_package), "config", right_ur_type, "visual_parameters.yaml"]
+    )
+
+    script_filename = PathJoinSubstitution(
+        [FindPackageShare("ur_client_library"), "resources", "external_control.urscript"]
+    )
+    input_recipe_filename = PathJoinSubstitution(
+        [FindPackageShare("ur_robot_driver"), "resources", "rtde_input_recipe.txt"]
+    )
+    output_recipe_filename = PathJoinSubstitution(
+        [FindPackageShare("ur_robot_driver"), "resources", "rtde_output_recipe.txt"]
+    )
+
+    rviz_config_file = PathJoinSubstitution(
+        [FindPackageShare(description_package), "rviz", "view_robot.rviz"]
+    )
+
+    # ----------------------------------------------------------------------
+    # Dual-arm robot_description via dual_arm_workcell.urdf.xacro
+    # ----------------------------------------------------------------------
+    robot_description_content = Command(
+        [
+            PathJoinSubstitution([FindExecutable(name="xacro")]),
+            " ",
+            PathJoinSubstitution([FindPackageShare(description_package), "urdf", description_file]),
+            " ",
+
+            # LEFT arm args
+            "left_ur_type:=",
+            left_ur_type,
+            " ",
+            "left_name:=",
+            "left_ur16e",
+            " ",
+            "left_tf_prefix:=",
+            left_tf_prefix,
+            " ",
+            "left_joint_limit_params:=",
+            left_joint_limit_params,
+            " ",
+            "left_kinematics_params:=",
+            left_kinematics_params_file,
+            " ",
+            "left_physical_params:=",
+            left_physical_params,
+            " ",
+            "left_visual_params:=",
+            left_visual_params,
+            " ",
+            "left_safety_limits:=",
+            left_safety_limits,
+            " ",
+            "left_safety_pos_margin:=",
+            left_safety_pos_margin,
+            " ",
+            "left_safety_k_position:=",
+            left_safety_k_position,
+            " ",
+            "left_robot_ip:=",
+            left_robot_ip,
+            " ",
+            "left_headless_mode:=",
+            headless_mode,
+            " ",
+            "left_script_filename:=",
+            script_filename,
+            " ",
+            "left_input_recipe_filename:=",
+            input_recipe_filename,
+            " ",
+            "left_output_recipe_filename:=",
+            output_recipe_filename,
+            " ",
+            "left_use_tool_communication:=",
+            use_tool_communication,
+            " ",
+            "left_tool_parity:=",
+            tool_parity,
+            " ",
+            "left_tool_baud_rate:=",
+            tool_baud_rate,
+            " ",
+            "left_tool_stop_bits:=",
+            tool_stop_bits,
+            " ",
+            "left_tool_rx_idle_chars:=",
+            tool_rx_idle_chars,
+            " ",
+            "left_tool_tx_idle_chars:=",
+            tool_tx_idle_chars,
+            " ",
+            "left_tool_device_name:=",
+            tool_device_name,
+            " ",
+            "left_tool_tcp_port:=",
+            left_tool_tcp_port,
+            " ",
+            "left_tool_voltage:=",
+            tool_voltage,
+            " ",
+            "left_reverse_ip:=",
+            reverse_ip,
+            " ",
+            "left_script_command_port:=",
+            left_script_command_port,
+            " ",
+            "left_reverse_port:=",
+            left_reverse_port,
+            " ",
+            "left_script_sender_port:=",
+            left_script_sender_port,
+            " ",
+            "left_trajectory_port:=",
+            left_trajectory_port,
+            " ",
+
+            # RIGHT arm args
+            "right_ur_type:=",
+            right_ur_type,
+            " ",
+            "right_name:=",
+            "right_ur16e",
+            " ",
+            "right_tf_prefix:=",
+            right_tf_prefix,
+            " ",
+            "right_joint_limit_params:=",
+            right_joint_limit_params,
+            " ",
+            "right_kinematics_params:=",
+            right_kinematics_params_file,
+            " ",
+            "right_physical_params:=",
+            right_physical_params,
+            " ",
+            "right_visual_params:=",
+            right_visual_params,
+            " ",
+            "right_safety_limits:=",
+            right_safety_limits,
+            " ",
+            "right_safety_pos_margin:=",
+            right_safety_pos_margin,
+            " ",
+            "right_safety_k_position:=",
+            right_safety_k_position,
+            " ",
+            "right_robot_ip:=",
+            right_robot_ip,
+            " ",
+            "right_headless_mode:=",
+            headless_mode,
+            " ",
+            "right_script_filename:=",
+            script_filename,
+            " ",
+            "right_input_recipe_filename:=",
+            input_recipe_filename,
+            " ",
+            "right_output_recipe_filename:=",
+            output_recipe_filename,
+            " ",
+            "right_use_tool_communication:=",
+            use_tool_communication,
+            " ",
+            "right_tool_parity:=",
+            tool_parity,
+            " ",
+            "right_tool_baud_rate:=",
+            tool_baud_rate,
+            " ",
+            "right_tool_stop_bits:=",
+            tool_stop_bits,
+            " ",
+            "right_tool_rx_idle_chars:=",
+            tool_rx_idle_chars,
+            " ",
+            "right_tool_tx_idle_chars:=",
+            tool_tx_idle_chars,
+            " ",
+            "right_tool_device_name:=",
+            tool_device_name,
+            " ",
+            "right_tool_tcp_port:=",
+            right_tool_tcp_port,
+            " ",
+            "right_tool_voltage:=",
+            tool_voltage,
+            " ",
+            "right_reverse_ip:=",
+            reverse_ip,
+            " ",
+            "right_script_command_port:=",
+            right_script_command_port,
+            " ",
+            "right_reverse_port:=",
+            right_reverse_port,
+            " ",
+            "right_script_sender_port:=",
+            right_script_sender_port,
+            " ",
+            "right_trajectory_port:=",
+            right_trajectory_port,
+            " ",
+
+            # Shared sim/fake-hardware flags
+            "use_fake_hardware:=",
+            use_fake_hardware,
+            " ",
+            "fake_sensor_commands:=",
+            fake_sensor_commands,
+            " ",
+        ]
+    )
+
+    robot_description = {
+        "robot_description": ParameterValue(value=robot_description_content, value_type=str)
+    }
+
+    # ----------------------------------------------------------------------
+    # Helper: build per-side node sets (namespace = "left" / "right")
+    # ----------------------------------------------------------------------
+    def side_nodes(side_name: str,
+                   ur_type_cfg: LaunchConfiguration,
+                   update_rate_file,
+                   robot_ip_cfg: LaunchConfiguration,
+                   tf_prefix_cfg: LaunchConfiguration,
+                   tool_tcp_port_cfg: LaunchConfiguration):
+
+        ns = side_name  # "left" or "right"
+
+        control_node = Node(
+            package="controller_manager",
+            executable="ros2_control_node",
+            namespace=ns,
+            parameters=[
+                robot_description,
+                update_rate_file,
+                ParameterFile(initial_joint_controllers, allow_substs=True),
+            ],
+            output="screen",
+            condition=IfCondition(use_fake_hardware),
+        )
+
+        ur_control_node = Node(
+            package="ur_robot_driver",
+            executable="ur_ros2_control_node",
+            namespace=ns,
+            parameters=[
+                robot_description,
+                update_rate_file,
+                ParameterFile(initial_joint_controllers, allow_substs=True),
+            ],
+            output="screen",
+            condition=UnlessCondition(use_fake_hardware),
+        )
+
+        dashboard_client_node = Node(
+            package="ur_robot_driver",
+            condition=IfCondition(
+                AndSubstitution(launch_dashboard_client, NotSubstitution(use_fake_hardware))
+            ),
+            executable="dashboard_client",
+            namespace=ns,
+            name=f"{ns}_dashboard_client",
+            output="screen",
+            emulate_tty=True,
+            parameters=[{"robot_ip": robot_ip_cfg}],
+        )
+
+        robot_state_helper_node = Node(
+            package="ur_robot_driver",
+            executable="robot_state_helper",
+            namespace=ns,
+            name=f"{ns}_robot_state_helper",
+            output="screen",
+            condition=UnlessCondition(use_fake_hardware),
+            parameters=[
+                {"headless_mode": headless_mode},
+                {"robot_ip": robot_ip_cfg},
+            ],
+        )
+
+        tool_communication_node = Node(
+            package="ur_robot_driver",
+            condition=IfCondition(use_tool_communication),
+            executable="tool_communication.py",
+            namespace=ns,
+            name=f"{ns}_tool_comm",
+            output="screen",
+            parameters=[
+                {
+                    "robot_ip": robot_ip_cfg,
+                    "tcp_port": tool_tcp_port_cfg,
+                    "device_name": tool_device_name,
+                }
+            ],
+        )
+
+        urscript_interface = Node(
+            package="ur_robot_driver",
+            executable="urscript_interface",
+            namespace=ns,
+            name=f"{ns}_urscript_interface",
+            parameters=[{"robot_ip": robot_ip_cfg}],
+            output="screen",
+        )
+
+        controller_stopper_node = Node(
+            package="ur_robot_driver",
+            executable="controller_stopper_node",
+            namespace=ns,
+            name=f"{ns}_controller_stopper",
+            output="screen",
+            emulate_tty=True,
+            condition=UnlessCondition(use_fake_hardware),
+            parameters=[
+                {"headless_mode": headless_mode},
+                {"joint_controller_active": activate_joint_controller},
+                {
+                    "consistent_controllers": [
+                        "io_and_status_controller",
+                        "force_torque_sensor_broadcaster",
+                        "joint_state_broadcaster",
+                        "speed_scaling_state_broadcaster",
+                        "tcp_pose_broadcaster",
+                        "ur_configuration_controller",
+                    ]
+                },
+            ],
+        )
+
+        trajectory_until_node = Node(
+            package="ur_robot_driver",
+            executable="trajectory_until_node",
+            namespace=ns,
+            name=f"{ns}_trajectory_until_node",
+            output="screen",
+            parameters=[
+                {
+                    "motion_controller_uri": f"/{ns}/{initial_joint_controller.perform(context)}/follow_joint_trajectory",
+                    "until_action_uri": f"/{ns}/tool_contact_controller/detect_tool_contact",
+                },
+            ],
+        )
+
+        def controller_spawner(controllers, active=True):
+            inactive_flags = ["--inactive"] if not active else []
+            return Node(
+                package="controller_manager",
+                executable="spawner",
+                namespace=ns,
+                arguments=[
+                    "--controller-manager",
+                    f"/{ns}/controller_manager",
+                    "--controller-manager-timeout",
+                    controller_spawner_timeout,
+                ]
+                + inactive_flags
+                + controllers,
+            )
+
+        controllers_active = [
+            "joint_state_broadcaster",
+            "io_and_status_controller",
+            "speed_scaling_state_broadcaster",
+            "force_torque_sensor_broadcaster",
+            "tcp_pose_broadcaster",
+            "ur_configuration_controller",
+        ]
+        controllers_inactive = [
+            "scaled_joint_trajectory_controller",
+            "joint_trajectory_controller",
+            "forward_velocity_controller",
+            "forward_position_controller",
+            "forward_effort_controller",
+            "force_mode_controller",
+            "passthrough_trajectory_controller",
+            "freedrive_mode_controller",
+            "tool_contact_controller",
+        ]
+
+        if activate_joint_controller.perform(context) == "true":
+            controllers_active.append(initial_joint_controller.perform(context))
+            controllers_inactive.remove(initial_joint_controller.perform(context))
+
+        if use_fake_hardware.perform(context) == "true":
+            controllers_active.remove("tcp_pose_broadcaster")
+
+        controller_spawners = [
+            controller_spawner(controllers_active),
+            controller_spawner(controllers_inactive, active=False),
+        ]
+
+        return [
+            control_node,
+            ur_control_node,
+            dashboard_client_node,
+            robot_state_helper_node,
+            tool_communication_node,
+            controller_stopper_node,
+            urscript_interface,
+            trajectory_until_node,
+        ] + controller_spawners
+
+    left_nodes = side_nodes(
+        "left",
+        left_ur_type,
+        left_update_rate_config_file,
+        left_robot_ip,
+        left_tf_prefix,
+        left_tool_tcp_port,
+    )
+    right_nodes = side_nodes(
+        "right",
+        right_ur_type,
+        right_update_rate_config_file,
+        right_robot_ip,
+        right_tf_prefix,
+        right_tool_tcp_port,
+    )
+
+    robot_state_publisher_node = Node(
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        output="both",
+        parameters=[robot_description],
+    )
+
+    rviz_node = Node(
+        package="rviz2",
+        condition=IfCondition(launch_rviz),
+        executable="rviz2",
+        name="rviz2",
+        output="log",
+        arguments=["-d", rviz_config_file],
+    )
+
+    return left_nodes + right_nodes + [robot_state_publisher_node, rviz_node]
+
+
+def generate_launch_description():
+    declared_arguments = []
+
+    # Left arm
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "left_ur_type",
+            default_value="ur16e",
+            description="Type/series of the left UR robot.",
+            choices=[
+                "ur3",
+                "ur5",
+                "ur10",
+                "ur3e",
+                "ur5e",
+                "ur7e",
+                "ur10e",
+                "ur12e",
+                "ur16e",
+                "ur8long",
+                "ur15",
+                "ur18",
+                "ur20",
+                "ur30",
+            ],
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "left_robot_ip",
+            default_value="0.0.0.0",
+            description="IP address by which the LEFT robot can be reached.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "left_safety_limits",
+            default_value="true",
+            description="Enable safety limits for the LEFT arm.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "left_safety_pos_margin",
+            default_value="0.15",
+            description="Safety position margin for the LEFT arm.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "left_safety_k_position",
+            default_value="20",
+            description="Safety k-position factor for the LEFT arm.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "left_tf_prefix",
+            default_value="left_",
+            description="tf_prefix for the LEFT arm.",
+        )
+    )
+
+    # Right arm
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "right_ur_type",
+            default_value="ur16e",
+            description="Type/series of the RIGHT UR robot.",
+            choices=[
+                "ur3",
+                "ur5",
+                "ur10",
+                "ur3e",
+                "ur5e",
+                "ur7e",
+                "ur10e",
+                "ur12e",
+                "ur16e",
+                "ur8long",
+                "ur15",
+                "ur18",
+                "ur20",
+                "ur30",
+            ],
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "right_robot_ip",
+            default_value="0.0.0.0",
+            description="IP address by which the RIGHT robot can be reached.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "right_safety_limits",
+            default_value="true",
+            description="Enable safety limits for the RIGHT arm.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "right_safety_pos_margin",
+            default_value="0.15",
+            description="Safety position margin for the RIGHT arm.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "right_safety_k_position",
+            default_value="20",
+            description="Safety k-position factor for the RIGHT arm.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "right_tf_prefix",
+            default_value="right_",
+            description="tf_prefix for the RIGHT arm.",
+        )
+    )
+
+    # Shared runtime / description
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "runtime_config_package",
+            default_value="ur_robot_driver",
+            description='Package with controller configs in "config" folder.',
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "controllers_file",
+            default_value="ur_controllers.yaml",
+            description="YAML file with the controllers configuration.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "description_package",
+            default_value="dual_arm_workcell_description",
+            description="Description package containing dual_arm_workcell.urdf.xacro.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "description_file",
+            default_value="dual_arm_workcell.urdf.xacro",
+            description="Dual-arm URDF/XACRO description file.",
+        )
+    )
+
+    # Separate kinematics config files (from ur_calibration)
+    ############# change this
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "left_kinematics_params_file",
+            default_value=PathJoinSubstitution(
+                [
+                    FindPackageShare("dual_arm_workcell_description"),
+                    "config",
+                    "ur16e",
+                    "default_kinematics.yaml",
+                ]
+            ),
+            description="Calibration configuration for the LEFT arm.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "right_kinematics_params_file",
+            default_value=PathJoinSubstitution(
+                [
+                    FindPackageShare("dual_arm_workcell_description"),
+                    "config",
+                    "ur16e",
+                    "default_kinematics.yaml",
+                ]
+            ),
+            description="Calibration configuration for the RIGHT arm.",
+        )
+    )
+
+    # Shared flags (copied from ur_control.launch.py)
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_fake_hardware",
+            default_value="false",
+            description="Start robots with fake hardware mirroring commands to states.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "fake_sensor_commands",
+            default_value="false",
+            description="Enable fake command interfaces for sensors for simple simulations.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "headless_mode",
+            default_value="false",
+            description="Enable headless mode for robot control.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "controller_spawner_timeout",
+            default_value="10",
+            description="Timeout used when spawning controllers.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "initial_joint_controller",
+            default_value="scaled_joint_trajectory_controller",
+            choices=[
+                "scaled_joint_trajectory_controller",
+                "joint_trajectory_controller",
+                "forward_velocity_controller",
+                "forward_position_controller",
+                "freedrive_mode_controller",
+                "passthrough_trajectory_controller",
+            ],
+            description="Initially loaded joint controller.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "activate_joint_controller",
+            default_value="true",
+            description="Activate the initially loaded joint controller.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "launch_rviz", default_value="true", description="Launch RViz with dual-arm config?"
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "launch_dashboard_client",
+            default_value="true",
+            description="Launch Dashboard Client for both arms?",
+        )
+    )
+
+    # Tool communication & reverse interface
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_tool_communication",
+            default_value="false",
+            description="Enable tool communication (e-series only).",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "tool_parity",
+            default_value="0",
+            description="Tool serial parity.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "tool_baud_rate",
+            default_value="115200",
+            description="Tool serial baud rate.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "tool_stop_bits",
+            default_value="1",
+            description="Tool serial stop bits.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "tool_rx_idle_chars",
+            default_value="1.5",
+            description="Tool serial RX idle chars.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "tool_tx_idle_chars",
+            default_value="3.5",
+            description="Tool serial TX idle chars.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "tool_device_name",
+            default_value="/tmp/ttyUR",
+            description="Device name for tool communication bridge.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "tool_voltage",
+            default_value="0",
+            description="Tool voltage to configure.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "reverse_ip",
+            default_value="0.0.0.0",
+            description="IP used by robot controllers to connect back to driver.",
+        )
+    )
+
+    # LEFT ports (5000x)
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "left_script_command_port",
+            default_value="50004",
+            description="Port for forwarding URScript commands (LEFT arm).",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "left_reverse_port",
+            default_value="50001",
+            description="Port for cyclic driver->robot instructions (LEFT arm).",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "left_script_sender_port",
+            default_value="50002",
+            description="Port to query external_control URScript (LEFT arm).",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "left_trajectory_port",
+            default_value="50003",
+            description="Port used for trajectory control (LEFT arm).",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "left_tool_tcp_port",
+            default_value="54321",
+            description="TCP port for tool communication bridge (LEFT arm).",
+        )
+    )
+
+    # RIGHT ports (6000x)
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "right_script_command_port",
+            default_value="60004",
+            description="Port for forwarding URScript commands (RIGHT arm).",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "right_reverse_port",
+            default_value="60001",
+            description="Port for cyclic driver->robot instructions (RIGHT arm).",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "right_script_sender_port",
+            default_value="60002",
+            description="Port to query external_control URScript (RIGHT arm).",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "right_trajectory_port",
+            default_value="60003",
+            description="Port used for trajectory control (RIGHT arm).",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "right_tool_tcp_port",
+            default_value="64321",
+            description="TCP port for tool communication bridge (RIGHT arm).",
+        )
+    )
+    
+    # ADD THIS (global tf_prefix, only to satisfy $(var tf_prefix) in ur_controllers.yaml)
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "tf_prefix",
+            default_value="",
+            description="Global tf_prefix used in ur_controllers.yaml (required for $(var tf_prefix)). "
+                        "Not used directly in dual-arm launch.",
+        )
+    )
+
+    return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])

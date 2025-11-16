@@ -39,7 +39,24 @@ from launch_ros.parameter_descriptions import ParameterValue
 def generate_launch_description():
     declared_arguments = []
     
-    # left ur arguments
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "description_package",
+            default_value="dual_arm_workcell_description",
+            description="Description package with robot URDF/XACRO files. Usually the argument "
+            "is not set, it enables use of a custom description.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "description_file",
+            default_value="dual_arm_workcell.urdf.xacro",
+            description="URDF/XACRO description file with the robot.",
+        )
+    )
+
+
+    # left robot arguments
     declared_arguments.append(
         DeclareLaunchArgument(
             "left_ur_type",
@@ -86,21 +103,6 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "left_description_package",
-            default_value="dual_arm_workcell_description",
-            description="Description package with robot URDF/XACRO files. Usually the argument "
-            "is not set, it enables use of a custom description.",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "left_description_file",
-            default_value="dual_arm_workcell.urdf.xacro",
-            description="URDF/XACRO description file with the robot.",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
             "left_tf_prefix",
             default_value='"left_"',
             description="Prefix of the joint names, useful for "
@@ -108,6 +110,7 @@ def generate_launch_description():
             "have to be updated.",
         )
     )
+
     
     # right robot arguments
     declared_arguments.append(
@@ -154,22 +157,6 @@ def generate_launch_description():
             description="k-position factor in the safety controller.",
         )
     )
-    # General arguments
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "right_description_package",
-            default_value="dual_arm_workcell_description",
-            description="Description package with robot URDF/XACRO files. Usually the argument "
-            "is not set, it enables use of a custom description.",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "right_description_file",
-            default_value="dual_arm_workcell.urdf.xacro",
-            description="URDF/XACRO description file with the robot.",
-        )
-    )
     declared_arguments.append(
         DeclareLaunchArgument(
             "right_tf_prefix",
@@ -181,28 +168,26 @@ def generate_launch_description():
     )
 
     # Initialize Arguments
+    description_package = LaunchConfiguration("description_package")
+    description_file = LaunchConfiguration("description_file")
+    
     left_ur_type = LaunchConfiguration("left_ur_type")
     left_safety_limits = LaunchConfiguration("left_safety_limits")
     left_safety_pos_margin = LaunchConfiguration("left_safety_pos_margin")
     left_safety_k_position = LaunchConfiguration("left_safety_k_position")
-    # General arguments
-    left_description_package = LaunchConfiguration("left_description_package")
-    left_description_file = LaunchConfiguration("left_description_file")
     left_tf_prefix = LaunchConfiguration("left_tf_prefix")
+
     right_ur_type = LaunchConfiguration("right_ur_type")
     right_safety_limits = LaunchConfiguration("right_safety_limits")
     right_safety_pos_margin = LaunchConfiguration("right_safety_pos_margin")
     right_safety_k_position = LaunchConfiguration("right_safety_k_position")
-    # General arguments
-    right_description_package = LaunchConfiguration("right_description_package")
-    right_description_file = LaunchConfiguration("right_description_file")
     right_tf_prefix = LaunchConfiguration("right_tf_prefix")
 
     robot_description_content = Command(
         [
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
-            PathJoinSubstitution([FindPackageShare(left_description_package), "urdf", left_description_file]),
+            PathJoinSubstitution([FindPackageShare(description_package), "urdf", description_file]),
             " ",
             "left_safety_limits:=",
             left_safety_limits,
@@ -248,7 +233,7 @@ def generate_launch_description():
     }
 
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare(left_description_package), "rviz", "view_robot.rviz"]
+        [FindPackageShare(description_package), "rviz", "view_robot.rviz"]
     )
 
     joint_state_publisher_node = Node(

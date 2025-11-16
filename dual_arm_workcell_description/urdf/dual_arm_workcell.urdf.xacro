@@ -45,7 +45,7 @@
    <xacro:arg name="left_tool_stop_bits" default="1" />
    <xacro:arg name="left_tool_rx_idle_chars" default="1.5" />
    <xacro:arg name="left_tool_tx_idle_chars" default="3.5" />
-   <xacro:arg name="left_tool_device_name" default="/tmp/ttyUR" />
+   <xacro:arg name="left_tool_device_name" default="/tmp/ttyUR" /> <!--there might be an issue here-->
    <xacro:arg name="left_tool_tcp_port" default="54321" />
 
    <!-- RIGHT ROBOT parameters -->
@@ -67,10 +67,10 @@
    <xacro:arg name="right_output_recipe_filename" default=""/>
    <xacro:arg name="right_input_recipe_filename" default=""/>
    <xacro:arg name="right_reverse_ip" default="0.0.0.0"/>
-   <xacro:arg name="right_script_command_port" default="50004"/>
-   <xacro:arg name="right_reverse_port" default="50001"/>
-   <xacro:arg name="right_script_sender_port" default="50002"/>
-   <xacro:arg name="right_trajectory_port" default="50003"/>
+   <xacro:arg name="right_script_command_port" default="60004"/>
+   <xacro:arg name="right_reverse_port" default="60001"/>
+   <xacro:arg name="right_script_sender_port" default="60002"/>
+   <xacro:arg name="right_trajectory_port" default="60003"/>
    <!--   tool communication related parameters-->
    <xacro:arg name="right_use_tool_communication" default="false" />
    <xacro:arg name="right_tool_voltage" default="0" />
@@ -79,8 +79,8 @@
    <xacro:arg name="right_tool_stop_bits" default="1" />
    <xacro:arg name="right_tool_rx_idle_chars" default="1.5" />
    <xacro:arg name="right_tool_tx_idle_chars" default="3.5" />
-   <xacro:arg name="right_tool_device_name" default="/tmp/ttyUR" />
-   <xacro:arg name="right_tool_tcp_port" default="54321" />
+   <xacro:arg name="right_tool_device_name" default="/tmp/ttyUR" /> <!--there might be an issue here-->
+   <xacro:arg name="right_tool_tcp_port" default="64321" />
 
    <!-- initial position for simulations (Fake Hardware, Gazebo, Ignition) -->
    <!-- optional properties, if you prefer the same pattern as the UR driver -->
