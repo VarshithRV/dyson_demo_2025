@@ -1,4 +1,5 @@
 log/
 .vscode/
 build/
-launch/__pycache__/
+dual_arm_workcell_description/launch/__pycache__/
+dual_arm_workcell_driver/launch/__pycache__/
