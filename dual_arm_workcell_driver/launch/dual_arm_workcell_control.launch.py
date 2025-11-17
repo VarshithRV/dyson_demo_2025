@@ -360,9 +360,7 @@ def launch_setup(context, *args, **kwargs):
             "right_ur16e" + "_update_rate.yaml",
         ]
     )
-
-
-
+    
     left_control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
