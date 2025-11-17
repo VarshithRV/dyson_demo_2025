@@ -361,6 +361,9 @@ def launch_setup(context, *args, **kwargs):
         ]
     )
     
+    # ----------------------------------------------------------------------
+    # Left control / driver stack
+    # ----------------------------------------------------------------------
     left_control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
@@ -382,6 +385,24 @@ def launch_setup(context, *args, **kwargs):
             robot_description,
             left_update_rate_config_file,
             ParameterFile(left_initial_joint_controllers, allow_substs=True),
+            {
+                "robot_ip": left_robot_ip,
+                "reverse_ip": left_reverse_ip,
+                "script_command_port": left_script_command_port,
+                "reverse_port": left_reverse_port,
+                "script_sender_port": left_script_sender_port,
+                "trajectory_port": left_trajectory_port,
+                "headless_mode": headless_mode,
+                "use_tool_communication": left_use_tool_communication,
+                "tool_parity": left_tool_parity,
+                "tool_baud_rate": left_tool_baud_rate,
+                "tool_stop_bits": left_tool_stop_bits,
+                "tool_rx_idle_chars": left_tool_rx_idle_chars,
+                "tool_tx_idle_chars": left_tool_tx_idle_chars,
+                "tool_device_name": left_tool_device_name,
+                "tool_tcp_port": left_tool_tcp_port,
+                "tool_voltage": left_tool_voltage,
+            },
         ],
         output="screen",
         condition=UnlessCondition(use_fake_hardware),
@@ -522,6 +543,7 @@ def launch_setup(context, *args, **kwargs):
         left_controller_spawner(left_controllers_active),
         left_controller_spawner(left_controllers_inactive, active=False),
     ]
+
 
     right_control_node = Node(
         package="controller_manager",
