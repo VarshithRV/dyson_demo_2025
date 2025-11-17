@@ -636,10 +636,10 @@ def launch_setup(context, *args, **kwargs):
         ur_control_node,
         control_node,
 
-        left_dashboard_client_node,
+        left_dashboard_client_node, 
         left_robot_state_helper_node,
-        left_tool_communication_node,
-        left_controller_stopper_node,
+        left_tool_communication_node, #doesn't work yet, but dont care
+        left_controller_stopper_node, #works or something like that
         left_urscript_interface,
         left_trajectory_until_node,
 
@@ -652,7 +652,7 @@ def launch_setup(context, *args, **kwargs):
 
         robot_state_publisher_node,
         rviz_node,
-    ] + controller_spawners # + right_controller_spawners + left_controller_spawners
+    ] + controller_spawners
 
     return nodes_to_start 
 
