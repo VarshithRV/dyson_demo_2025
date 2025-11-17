@@ -965,7 +965,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "left_tool_device_name",
-            default_value="/tmp/ttyUR", #### might cause problems
+            default_value="/tmp/ttyleftUR", #### might cause problems
             description="File descriptor that will be generated for the tool communication device. "
             "The user has be be allowed to write to this location. "
             "Only effective, if use_tool_communication is set to True.",
@@ -1187,7 +1187,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "right_tool_device_name",
-            default_value="/tmp/ttyUR", #### might cause problems
+            default_value="/tmp/ttyrightUR", #### might cause problems
             description="File descriptor that will be generated for the tool communication device. "
             "The user has be be allowed to write to this location. "
             "Only effective, if use_tool_communication is set to True.",
