@@ -543,10 +543,6 @@ def launch_setup(context, *args, **kwargs):
         left_controller_spawner(left_controllers_inactive, active=False),
     ]
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
     right_control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
