@@ -1,14 +1,5 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="dual_arm_workcell">
-    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
-
-    <!-- Import dual_arm_workcell urdf file -->
+    <!-- Kinematic description only, no ros2_control here -->
     <xacro:include filename="$(find dual_arm_workcell_description)/urdf/dual_arm_workcell.urdf" />
-
-    <!-- Import control_xacro -->
-    <xacro:include filename="dual_arm_workcell.ros2_control.xacro" />
-
-
-    <xacro:dual_arm_workcell_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
-
 </robot>
