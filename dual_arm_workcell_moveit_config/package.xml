@@ -4,7 +4,7 @@
   <name>dual_arm_workcell_moveit_config</name>
   <version>0.3.0</version>
   <description>
-     An automatically generated package with all the configuration and launch files for using the left_ur16e with the MoveIt Motion Planning Framework
+     An automatically generated package with all the configuration and launch files for using the dual_arm_workcell with the MoveIt Motion Planning Framework
   </description>
   <maintainer email="varshith_vyasaraj@sutd.edu.sg">Varshith R V</maintainer>
 
