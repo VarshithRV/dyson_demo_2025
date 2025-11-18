@@ -39,6 +39,7 @@ def generate_launch_description():
 
     move_group_configuration = {
         "publish_robot_description_semantic": True,
+        "publish_robot_description": True,
         "allow_trajectory_execution": True,
         "publish_planning_scene": True,
         "publish_geometry_updates": True,
@@ -113,8 +114,8 @@ def generate_launch_description():
     return LaunchDescription(
         declared_launch_arguments + [
             move_group_node,
-            left_servo_node,
-            right_servo_node,
+            # left_servo_node,
+            # right_servo_node,
             rviz_node,
         ]
     )
