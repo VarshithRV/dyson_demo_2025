@@ -624,19 +624,19 @@ def launch_setup(context, *args, **kwargs):
         ur_control_node,
         control_node,
 
-        left_dashboard_client_node, 
-        left_robot_state_helper_node,
-        left_tool_communication_node, #doesn't work yet, but dont care
-        left_controller_stopper_node, #works or something like that
-        left_urscript_interface,
-        left_trajectory_until_node,
+        # left_dashboard_client_node, 
+        # left_robot_state_helper_node,
+        # left_tool_communication_node, #doesn't work yet, but dont care
+        # left_controller_stopper_node, #works or something like that
+        # left_urscript_interface,
+        # left_trajectory_until_node,
 
-        right_dashboard_client_node, 
-        right_robot_state_helper_node,
-        right_tool_communication_node, 
-        right_controller_stopper_node,
-        right_urscript_interface,
-        right_trajectory_until_node,
+        # right_dashboard_client_node, 
+        # right_robot_state_helper_node,
+        # right_tool_communication_node, 
+        # right_controller_stopper_node,
+        # right_urscript_interface,
+        # right_trajectory_until_node,
 
         robot_state_publisher_node,
         rviz_node,
