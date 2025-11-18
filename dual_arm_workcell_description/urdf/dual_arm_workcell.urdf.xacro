@@ -1,11 +1,12 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://wiki.ros.org/xacro" name="$(arg left_name)">
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="$(arg name)">
    <!-- import main macro -->
    <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
     
    <!-- possible 'ur_type' values: ur3, ur5, ur10, ur3e, ur5e, ur7e, ur10e, ur12e, ur16e, ur8long, ur15, ur18, ur20, ur30 -->
    <!-- the default value should raise an error in case this was called without defining the type -->
    <!-- Simulation parameters -->
+   <xacro:arg name="name" default="dual_arm_workcell" /> 
    <xacro:arg name="use_fake_hardware" default="false" />
    <xacro:arg name="fake_sensor_commands" default="false" />
    <xacro:arg name="sim_gazebo" default="false" />

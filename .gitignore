@@ -3,3 +3,4 @@ log/
 build/
 dual_arm_workcell_description/launch/__pycache__/
 dual_arm_workcell_driver/launch/__pycache__/
+dual_arm_workcell_moveit_config/launch/__pycache__/
