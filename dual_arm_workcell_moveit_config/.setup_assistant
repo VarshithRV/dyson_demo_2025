@@ -7,7 +7,7 @@ moveit_setup_assistant_config:
   package_settings:
     author_name: Varshith R V
     author_email: varshith_vyasaraj@sutd.edu.sg
-    generated_timestamp: 1763410047
+    generated_timestamp: 1763457802
   control_xacro:
     command:
       - position
