@@ -313,7 +313,41 @@ def launch_setup(context, *args, **kwargs):
         ],
     )
 
-    nodes_to_start = [move_group_node, rviz_node]
+    # Right Servo node for realtime control
+    left_servo_yaml = load_yaml("dual_arm_workcell_moveit_config", "config/left_ur_servo.yaml")
+    left_servo_params = {"moveit_servo": left_servo_yaml}
+    left_servo_node = Node(
+        package="moveit_servo",
+        condition=IfCondition(launch_servo),
+        executable="servo_node_main",
+        name="left_servo_node_main",
+        parameters=[
+            left_servo_params,
+            robot_description,
+            robot_description_semantic,
+            robot_description_kinematics,
+        ],
+        output="screen",
+    )
+
+    # Right Servo node for realtime control
+    right_servo_yaml = load_yaml("dual_arm_workcell_moveit_config", "config/right_ur_servo.yaml")
+    right_servo_params = {"moveit_servo": right_servo_yaml}
+    right_servo_node = Node(
+        package="moveit_servo",
+        condition=IfCondition(launch_servo),
+        executable="servo_node_main",
+        name="right_servo_node_main",
+        parameters=[
+            right_servo_params,
+            robot_description,
+            robot_description_semantic,
+            robot_description_kinematics,
+        ],
+        output="screen",
+    )
+
+    nodes_to_start = [move_group_node, left_servo_node, right_servo_node, rviz_node]
 
     return nodes_to_start
 
