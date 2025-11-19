@@ -159,7 +159,7 @@
      script_sender_port="$(arg left_script_sender_port)"
      trajectory_port="$(arg left_trajectory_port)"
      >
-     <origin xyz="0 1.0 0" rpy="0 0 0" />          <!-- position robot in the world -->
+     <origin xyz="-0.236 0.555 -0.007" rpy="0.035 0.036 1.558" />          <!-- position robot in the world -->
    </xacro:ur_robot>
 
    <!-- right arm -->
@@ -200,7 +200,7 @@
      script_sender_port="$(arg right_script_sender_port)"
      trajectory_port="$(arg right_trajectory_port)"
      >
-     <origin xyz="0 -1.0 0" rpy="0 0 0" />          <!-- position robot in the world -->
+     <origin xyz="0.635 0.594 0.010" rpy="-0.009 0.015 1.580" />          <!-- position robot in the world -->
    </xacro:ur_robot>
 
    <xacro:if value="$(arg sim_gazebo)">

@@ -16,6 +16,7 @@ def launch_setup():
     dual_arm_workcell_driver_pkg = FindPackageShare('dual_arm_workcell_driver').find('dual_arm_workcell_driver')
     dual_arm_workcell_moveit_pkg = FindPackageShare('dual_arm_workcell_moveit_config').find('dual_arm_workcell_moveit_config')
     realsense2_camera_pkg = FindPackageShare('realsense2_camera').find('realsense2_camera')
+    bringup_pkg = FindPackageShare('dual_arm_workcell_bringup').find('dual_arm_workcell_bringup')
 
     dual_arm_workcell_control_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -50,6 +51,12 @@ def launch_setup():
         }.items()
     )
 
+    left_camera_calibration_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(bringup_pkg, 'launch', 'left_camera_left_wrist_3_link_calibration.launch.py')
+        )
+    )
+
     right_camera_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(realsense2_camera_pkg, 'launch', 'rs_launch.py')
@@ -66,11 +73,19 @@ def launch_setup():
         }.items()
     )
 
+    right_camera_calibration_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(bringup_pkg, 'launch', 'right_camera_right_wrist_3_link_calibration.launch.py')
+        )
+    )
+
     return [
             dual_arm_workcell_control_launch,
             dual_arm_workcell_moveit_launch,
             left_camera_launch,
             right_camera_launch,
+            left_camera_calibration_launch,
+            right_camera_calibration_launch,
     ]
 
 def generate_launch_description():
