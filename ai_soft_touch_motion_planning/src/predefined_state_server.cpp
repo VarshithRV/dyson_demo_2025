@@ -16,17 +16,9 @@
 using namespace std::chrono_literals;
 using moveit::planning_interface::MoveGroupInterface;
 
-#define SHOULDER_PAN 0.0
-#define SHOULDER_LIFT 0.0
-#define ELBOW 0.0
-#define WRIST_1 0.0
-#define WRIST_2 0.0
-#define WRIST_3 0.0
-#define PLANNING_GROUP "left_ur16e"
-
-class MoveitExamples{
+class PredefinedStateServer{
     public: 
-        MoveitExamples(rclcpp::Node::SharedPtr &node){
+        PredefinedStateServer(rclcpp::Node::SharedPtr &node){
             node_ = node;
             
             node_->declare_parameter<std::string>("planning_group", "left_ur16e");
@@ -49,8 +41,8 @@ class MoveitExamples{
             bool ok = move_group_interface_->startStateMonitor(5.0);
             if (!ok)
                 RCLCPP_WARN(node_->get_logger(), "State monitor did not receive joint states within 5 seconds");
-            print_state_server_= node_->create_service<example_interfaces::srv::Trigger>("~/print_robot_state",std::bind(&MoveitExamples::print_state,this,std::placeholders::_1,std::placeholders::_2));
-            move_to_state_server_ = node->create_service<example_interfaces::srv::Trigger>("~/move_to_state",std::bind(&MoveitExamples::move_to_joint_state,this,std::placeholders::_1,std::placeholders::_2));
+            print_state_server_= node_->create_service<example_interfaces::srv::Trigger>("~/print_robot_state",std::bind(&PredefinedStateServer::print_state,this,std::placeholders::_1,std::placeholders::_2));
+            move_to_state_server_ = node->create_service<example_interfaces::srv::Trigger>("~/move_to_state",std::bind(&PredefinedStateServer::move_to_joint_state,this,std::placeholders::_1,std::placeholders::_2));
         }
 
         // pose setpoint movement
@@ -128,7 +120,7 @@ int main(int argc, char* argv[]){
 
     rclcpp::init(argc,argv);
     auto node = std::make_shared<rclcpp::Node>("predefined_state_server");
-    auto moveit_example = std::make_shared<MoveitExamples>(node);
+    auto moveit_example = std::make_shared<PredefinedStateServer>(node);
     RCLCPP_INFO(node->get_logger(),"Started the tutorials node");
     rclcpp::spin(node);
     rclcpp::shutdown();

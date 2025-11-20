@@ -26,6 +26,13 @@ predefined_state_server
 DESTINATION lib/${PROJECT_NAME}
 )
 
+add_executable(pick_and_place_server src/pick_and_place_server.cpp)
+ament_target_dependencies(pick_and_place_server example_interfaces rclcpp geometry_msgs moveit_ros_planning_interface moveit_core ai_soft_touch_motion_planning_msgs)
+install(TARGETS
+pick_and_place_server
+DESTINATION lib/${PROJECT_NAME}
+)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
