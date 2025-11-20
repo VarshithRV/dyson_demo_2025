@@ -42,6 +42,9 @@ class PickPlace{
             node_->declare_parameter<double>("look_offset_x", 0.0);
             node_->declare_parameter<double>("look_offset_y", 0.0);
             node_->declare_parameter<double>("look_offset_z", 0.0);
+
+            node_->declare_parameter<double>("place_step_x", 0.05);
+            node_->declare_parameter<double>("place_step_y", 0.05);
             
             node_->declare_parameter<double>("height_of_movement", 0.25);
 
@@ -65,6 +68,9 @@ class PickPlace{
             look_offset_.push_back(node->get_parameter("look_offset_x").as_double());
             look_offset_.push_back(node->get_parameter("look_offset_y").as_double());
             look_offset_.push_back(node->get_parameter("look_offset_z").as_double());
+
+            place_step_x_ = node_->get_parameter("place_step_x").as_double();
+            place_step_y_ = node_->get_parameter("place_step_y").as_double();
 
             height_of_movement_=node->get_parameter("height_of_movement").as_double();
 
@@ -153,8 +159,8 @@ class PickPlace{
             approx_pick.orientation.z = orientation_[3];
 
             geometry_msgs::msg::Pose place;
-            place.position.x = place_position_[0];
-            place.position.y = place_position_[1];
+            place.position.x = place_position_[0] + (((request->index)/2)*place_step_x_); // for placing in a grid pattern
+            place.position.y = place_position_[1] - ((request->index)%2?:place_step_y_,0.0);
             place.position.z = place_position_[2];
             place.orientation.w = orientation_[0];
             place.orientation.x = orientation_[1];
@@ -269,6 +275,7 @@ class PickPlace{
         std::vector<double> look_offset_;
         double height_of_movement_;
         std::string endeffector_link_;
+        double place_step_x_, place_step_y_;
 };
 
 int main(int argc, char* argv[]){

@@ -44,6 +44,8 @@ def generate_launch_description():
             "look_offset_x":0.0,
             "look_offset_y":0.0,
             "look_offset_z":0.2,
+            "place_step_x":0.05,
+            "place_step_y":0.05,
             "height_of_movement":0.25,
             "endeffector_link": "right_tool0",
         },
