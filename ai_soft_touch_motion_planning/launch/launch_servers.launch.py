@@ -24,7 +24,7 @@ def generate_launch_description():
 
     rws_pick_and_place_server = Node(
     package="ai_soft_touch_motion_planning",
-    executable="rws_pick_and_place_server",
+    executable="pick_and_place_server",
     name="rws_pick_and_place_server",
     output="screen",
     parameters=[
