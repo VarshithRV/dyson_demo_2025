@@ -1,17 +1,17 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import (
-    LaunchConfiguration,
-)
+from launch.substitutions import LaunchConfiguration
+from launch.conditions import UnlessCondition
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.parameter_descriptions import ParameterValue
 import os
 
+
 def launch_setup():
-    left_robot_ip=LaunchConfiguration('left_robot_ip')
-    right_robot_ip=LaunchConfiguration('right_robot_ip')
-    use_fake_hardware=LaunchConfiguration('use_fake_hardware')
+    left_robot_ip = LaunchConfiguration('left_robot_ip')
+    right_robot_ip = LaunchConfiguration('right_robot_ip')
+    use_fake_hardware = LaunchConfiguration('use_fake_hardware')
     
     dual_arm_workcell_driver_pkg = FindPackageShare('dual_arm_workcell_driver').find('dual_arm_workcell_driver')
     dual_arm_workcell_moveit_pkg = FindPackageShare('dual_arm_workcell_moveit_config').find('dual_arm_workcell_moveit_config')
@@ -40,21 +40,22 @@ def launch_setup():
             os.path.join(realsense2_camera_pkg, 'launch', 'rs_launch.py')
         ),
         launch_arguments={
-            'camera_name':'left_camera',
-            'align_depth':'true',
-            'serial_no':'_135122075246',
-            'pointcloud.enable':'true',
-            'spatial_filter.enable':'true',
-            'temporal_filter.enable':'true',
-            'hole_filling_filter.enable':'true',
-
-        }.items()
+            'camera_name': 'left_camera',
+            'align_depth': 'true',
+            'serial_no': '_135122075246',
+            'pointcloud.enable': 'true',
+            'spatial_filter.enable': 'true',
+            'temporal_filter.enable': 'true',
+            'hole_filling_filter.enable': 'true',
+        }.items(),
+        condition=UnlessCondition(use_fake_hardware),
     )
 
     left_camera_calibration_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(bringup_pkg, 'launch', 'left_camera_left_wrist_3_link_calibration.launch.py')
-        )
+        ),
+        condition=UnlessCondition(use_fake_hardware),
     )
 
     right_camera_launch = IncludeLaunchDescription(
@@ -62,31 +63,33 @@ def launch_setup():
             os.path.join(realsense2_camera_pkg, 'launch', 'rs_launch.py')
         ),
         launch_arguments={
-            'camera_name':'right_camera',
-            'align_depth':'true',
-            'serial_no':'_211122061649',
-            'pointcloud.enable':'true',
-            'spatial_filter.enable':'true',
-            'temporal_filter.enable':'true',
-            'hole_filling_filter.enable':'true',
-
-        }.items()
+            'camera_name': 'right_camera',
+            'align_depth': 'true',
+            'serial_no': '_211122061649',
+            'pointcloud.enable': 'true',
+            'spatial_filter.enable': 'true',
+            'temporal_filter.enable': 'true',
+            'hole_filling_filter.enable': 'true',
+        }.items(),
+        condition=UnlessCondition(use_fake_hardware),
     )
 
     right_camera_calibration_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(bringup_pkg, 'launch', 'right_camera_right_wrist_3_link_calibration.launch.py')
-        )
+        ),
+        condition=UnlessCondition(use_fake_hardware),
     )
 
     return [
-            dual_arm_workcell_control_launch,
-            dual_arm_workcell_moveit_launch,
-            left_camera_launch,
-            right_camera_launch,
-            left_camera_calibration_launch,
-            right_camera_calibration_launch,
+        dual_arm_workcell_control_launch,
+        dual_arm_workcell_moveit_launch,
+        left_camera_launch,
+        right_camera_launch,
+        left_camera_calibration_launch,
+        right_camera_calibration_launch,
     ]
+
 
 def generate_launch_description():
     declared_arguments = []
@@ -116,4 +119,4 @@ def generate_launch_description():
     )
 
     nodes = launch_setup()
-    return LaunchDescription(declared_arguments+nodes)
+    return LaunchDescription(declared_arguments + nodes)
