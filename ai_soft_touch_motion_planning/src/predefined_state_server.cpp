@@ -63,6 +63,7 @@ class PredefinedStateServer{
         // joint state setpoint movement
         void move_to_joint_state(const example_interfaces::srv::Trigger_Request::SharedPtr request, example_interfaces::srv::Trigger_Response::SharedPtr response){
             std::vector<double> group_variable_values = {joint_targets_};
+            move_group_interface_->setStartStateToCurrentState();
             move_group_interface_->setJointValueTarget(group_variable_values);
             auto const [success, plan] = [this]{
                 moveit::planning_interface::MoveGroupInterface::Plan msg;

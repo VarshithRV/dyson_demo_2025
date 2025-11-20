@@ -32,8 +32,8 @@
         <joint name="right_flange-tool0"/>
     </group>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <!-- <end_effector name="left_ur16e_end_effector" parent_link="left_tool0" group="left_ur16e"/>
-    <end_effector name="right_ur16e_end_effector" parent_link="right_tool0" group="right_ur16e"/> -->
+    <end_effector name="left_ur16e_end_effector" parent_link="left_tool0" group="left_ur16e"/>
+    <end_effector name="right_ur16e_end_effector" parent_link="right_tool0" group="right_ur16e"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="left_base_link_inertia" link2="left_shoulder_link" reason="Adjacent"/>
     <disable_collisions link1="left_base_link_inertia" link2="left_upper_arm_link" reason="Never"/>

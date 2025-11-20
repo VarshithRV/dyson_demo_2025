@@ -11,6 +11,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
+#include "geometry_msgs/msg/point.hpp"
 #include "example_interfaces/srv/trigger.hpp"
 #include "ai_soft_touch_motion_planning_msgs/srv/pick.hpp"
 
@@ -44,6 +45,8 @@ class PickPlace{
             
             node_->declare_parameter<double>("height_of_movement", 0.25);
 
+            node_->declare_parameter<std::string>("endeffector_link", "right_tool0");
+
             planning_group_ = node_->get_parameter("planning_group").as_string();
             
             orientation_.push_back(node->get_parameter("orientation_w").as_double());
@@ -65,15 +68,29 @@ class PickPlace{
 
             height_of_movement_=node->get_parameter("height_of_movement").as_double();
 
+            endeffector_link_=node->get_parameter("endeffector_link").as_string();
+
             move_group_interface_ = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node, planning_group_);
-            
-            bool ok = move_group_interface_->startStateMonitor(5.0);
-            if (!ok)
-                RCLCPP_WARN(node_->get_logger(), "State monitor did not receive joint states within 5 seconds");
-            
+
+            move_group_interface_->setEndEffectorLink(endeffector_link_);
+            move_group_interface_->setPlanningTime(10.0);
+            move_group_interface_->setNumPlanningAttempts(15);
+            move_group_interface_->setMaxVelocityScalingFactor(0.1);
+            move_group_interface_->setMaxAccelerationScalingFactor(0.1);
+            move_group_interface_->setPlannerId("RRTConnectkConfigDefault");
+            move_group_interface_->startStateMonitor();
+
+            rclcpp::sleep_for(3s);
+
             auto planning_frame = this->move_group_interface_->getPlanningFrame();
             RCLCPP_INFO(node->get_logger(),"Planning frame : %s",planning_frame.c_str());
             
+            auto endeffector = this-> move_group_interface_->getEndEffectorLink();
+            RCLCPP_INFO(node->get_logger(),"End Effector Link : %s",endeffector.c_str());
+            
+            auto current_pose = this->move_group_interface_->getCurrentPose(endeffector); // this consistently returns a wrong value
+            RCLCPP_INFO(node->get_logger(), "x : %f, y : %f, z : %f",current_pose.pose.position.x,current_pose.pose.position.y,current_pose.pose.position.z);
+
             print_state_server_= node_->create_service<example_interfaces::srv::Trigger>("~/print_robot_state",std::bind(&PickPlace::print_state,this,std::placeholders::_1,std::placeholders::_2));
             pick_and_place_server_ = node_->create_service<ai_soft_touch_motion_planning_msgs::srv::Pick>("~/pick_and_place",std::bind(&PickPlace::pick_and_place_server,this,std::placeholders::_1,std::placeholders::_2));
 
@@ -93,46 +110,47 @@ class PickPlace{
             move_group_interface_->clearPoseTargets();
         }
 
-        bool move_to_pose_cartesian(const geometry_msgs::msg::Pose &pose){
-            std::vector<geometry_msgs::msg::Pose> waypoints;
-            waypoints.push_back(move_group_interface_->getCurrentPose().pose);
-            waypoints.push_back(pose);
-
+        bool execute_waypoints(const std::vector<geometry_msgs::msg::Pose> waypoints){
+            move_group_interface_->setStartStateToCurrentState();
             moveit_msgs::msg::RobotTrajectory trajectory;
-            const double eef_step = 0.01;
+            const double eef_step = 0.002;
             const double jump_threshold = 0.0;
 
+            RCLCPP_INFO(node_->get_logger(), "Computing cartesian path");
             double fraction = move_group_interface_->computeCartesianPath(
                 waypoints, eef_step, jump_threshold, trajectory);
-            
+
             if (fraction < 1.0) {
                 RCLCPP_ERROR(node_->get_logger(), "Cartesian path planning failed, fraction: %f", fraction);
                 return false;
             }
         
+            RCLCPP_INFO(node_->get_logger(),"Trajectory created attempting to execute now");
+
             moveit::planning_interface::MoveGroupInterface::Plan plan;
             plan.trajectory_ = trajectory;
         
             auto result = move_group_interface_->execute(plan);
+
             if (result != moveit::core::MoveItErrorCode::SUCCESS) {
                 RCLCPP_ERROR(node_->get_logger(), "Cartesian path execution failed");
                 return false;
             }
+            move_group_interface_->setStartStateToCurrentState();
             return true;
         }
 
         void pick_and_place_server(const ai_soft_touch_motion_planning_msgs::srv::Pick_Request::SharedPtr request,ai_soft_touch_motion_planning_msgs::srv::Pick_Response::SharedPtr response){
             geometry_msgs::msg::Pose approx_pick;
+            
+            move_group_interface_->setStartStateToCurrentState();
+            auto current_pose = this->move_group_interface_->getCurrentPose().pose;
+            
             approx_pick.position = request->object_position;
-            approx_pick.position.x += pick_offset_[0];
-            approx_pick.position.y += pick_offset_[1];
-            approx_pick.position.z += pick_offset_[2];
             approx_pick.orientation.w = orientation_[0];
             approx_pick.orientation.x = orientation_[1];
             approx_pick.orientation.y = orientation_[2];
             approx_pick.orientation.z = orientation_[3];
-
-            auto current_pose = this->move_group_interface_->getCurrentPose().pose;
 
             geometry_msgs::msg::Pose place;
             place.position.x = place_position_[0];
@@ -143,54 +161,69 @@ class PickPlace{
             place.orientation.y = orientation_[2];
             place.orientation.z = orientation_[3];
 
-            geometry_msgs::msg::Pose target;
-
-            target = current_pose;
-            target.position.z = height_of_movement_;
-            if (!move_to_pose_cartesian(target)) {
-                response->result = false;
-                return;
-            }
+            move_group_interface_->setStartStateToCurrentState();
+            geometry_msgs::msg::Pose target = move_group_interface_->getCurrentPose(this->endeffector_link_).pose;
+            
+            std::vector<geometry_msgs::msg::Pose> waypoints;
+            waypoints.push_back(target);
 
             geometry_msgs::msg::Pose look_pose = approx_pick;
+            
             look_pose.position.x += look_offset_[0];
             look_pose.position.y += look_offset_[1];
             look_pose.position.z += look_offset_[2];
-            if (!move_to_pose_cartesian(look_pose)) {
-                response->result = false;
+            waypoints.push_back(look_pose);
+            
+            if(!execute_waypoints(waypoints)){
+                response->result=false;
+                return;
+            }
+                
+            std::this_thread::sleep_for(2s);
+            // do perception here and then add the pick_offset_ biases here, set the orientation
+
+            waypoints.clear();
+
+            approx_pick.position.x += pick_offset_[0];
+            approx_pick.position.y += pick_offset_[1];
+            approx_pick.position.z += pick_offset_[2];
+            waypoints.push_back(approx_pick);
+
+            if(!execute_waypoints(waypoints)){
+                response->result=false;
                 return;
             }
 
-            // at this place, do perception again and get the pick position and substitute instead of approx_pick
-
-            if (!move_to_pose_cartesian(approx_pick)) {
-                response->result = false;
-                return;
-            }
-
+            std::this_thread::sleep_for(2s);
+            // activate gripper here
+            
+            waypoints.clear();
             geometry_msgs::msg::Pose post_pick = approx_pick;
             post_pick.position.z = height_of_movement_;
-            if (!move_to_pose_cartesian(post_pick)) {
-                response->result = false;
-                return;
-            }
+            waypoints.push_back(post_pick);
 
             geometry_msgs::msg::Pose pre_place = place;
             pre_place.position.z = height_of_movement_;
-            if (!move_to_pose_cartesian(pre_place)) {
-                response->result = false;
+            waypoints.push_back(pre_place);
+            waypoints.push_back(place);
+
+            if(!execute_waypoints(waypoints)){
+                response->result=false;
                 return;
             }
 
-            if (!move_to_pose_cartesian(place)) {
-                response->result = false;
+            std::this_thread::sleep_for(2s);
+
+            waypoints.clear();
+            waypoints.push_back(pre_place);
+
+            if(!execute_waypoints(waypoints)){
+                response->result=false;
                 return;
             }
 
-            if (!move_to_pose_cartesian(pre_place)) {
-                response->result = false;
-                return;
-            }
+            move_group_interface_->setStartStateToCurrentState();
+
             response->result = true;
         }
 
@@ -235,6 +268,7 @@ class PickPlace{
         std::vector<double> pick_offset_;
         std::vector<double> look_offset_;
         double height_of_movement_;
+        std::string endeffector_link_;
 };
 
 int main(int argc, char* argv[]){
