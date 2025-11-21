@@ -83,12 +83,12 @@ class GetObjectLocationsClient(Node):
             p = pose.pose.position
             self.get_logger().info(
                 f"[{window_name}] Object {i}: "
-                f"Class='{obj.Class}', "
+                f"label='{obj.label}', "
                 f"pos = ({p.x:.3f}, {p.y:.3f}, {p.z:.3f})"
             )
             # Optional: wait for key between objects
             if img is not None:
-                cv2.setWindowTitle(window_name, f"{window_name} - Obj {i}: {obj.Class}")
+                cv2.setWindowTitle(window_name, f"{window_name} - Obj {i}: {obj.label}")
                 cv2.imshow(window_name, img)
                 cv2.waitKey(500)  # 0.5s per object; set to 0 to wait for keypress
 
