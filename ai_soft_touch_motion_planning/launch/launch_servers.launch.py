@@ -48,6 +48,9 @@ def generate_launch_description():
             "place_step_y":0.05,
             "height_of_movement":0.25,
             "endeffector_link": "right_tool0",
+            "pin_out1":14,
+            "pin_out2":15,
+            "arm_side":"right"
         },
         {"use_sim_time":True},
         ],
@@ -55,7 +58,7 @@ def generate_launch_description():
 
     suction_pick_and_place_server = Node(
     package="ai_soft_touch_motion_planning",
-    executable="pick_and_place_server",
+    executable="pick_and_place_ft_feedback_server",
     name="suction_pick_and_place_server",
     output="screen",
     parameters=[
@@ -75,8 +78,14 @@ def generate_launch_description():
             "look_offset_x":0.0,
             "look_offset_y":0.0,
             "look_offset_z":0.2,
+            "place_step_x":0.05,
+            "place_step_y":0.05,
             "height_of_movement":0.25,
             "endeffector_link": "left_tool0",
+            "pin_out1":12,
+            "pin_out2":0,
+            "arm_side":"left",
+            "ft_threshold": 5.0,
         },
         {"use_sim_time":True},
         ],

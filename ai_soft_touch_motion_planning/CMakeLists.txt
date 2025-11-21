@@ -12,6 +12,9 @@ find_package(moveit_ros_planning_interface REQUIRED)
 find_package(moveit_core REQUIRED)
 find_package(ai_soft_touch_motion_planning_msgs REQUIRED)
 find_package(example_interfaces REQUIRED)
+find_package(ur_msgs REQUIRED)
+find_package(controller_manager_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -20,16 +23,26 @@ install(DIRECTORY launch
 )
 
 add_executable(predefined_state_server src/predefined_state_server.cpp)
-ament_target_dependencies(predefined_state_server example_interfaces rclcpp geometry_msgs moveit_ros_planning_interface moveit_core)
+ament_target_dependencies(predefined_state_server example_interfaces rclcpp 
+geometry_msgs moveit_ros_planning_interface moveit_core)
 install(TARGETS
 predefined_state_server
 DESTINATION lib/${PROJECT_NAME}
 )
 
 add_executable(pick_and_place_server src/pick_and_place_server.cpp)
-ament_target_dependencies(pick_and_place_server example_interfaces rclcpp geometry_msgs moveit_ros_planning_interface moveit_core ai_soft_touch_motion_planning_msgs)
+ament_target_dependencies(pick_and_place_server example_interfaces rclcpp geometry_msgs moveit_ros_planning_interface moveit_core 
+ai_soft_touch_motion_planning_msgs ur_msgs)
 install(TARGETS
 pick_and_place_server
+DESTINATION lib/${PROJECT_NAME}
+)
+
+add_executable(pick_and_place_ft_feedback_server src/pick_and_place_ft_feedback_server.cpp)
+ament_target_dependencies(pick_and_place_ft_feedback_server example_interfaces rclcpp geometry_msgs moveit_ros_planning_interface 
+moveit_core ai_soft_touch_motion_planning_msgs ur_msgs controller_manager_msgs std_srvs)
+install(TARGETS
+pick_and_place_ft_feedback_server
 DESTINATION lib/${PROJECT_NAME}
 )
 
