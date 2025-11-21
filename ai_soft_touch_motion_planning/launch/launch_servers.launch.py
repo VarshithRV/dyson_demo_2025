@@ -49,7 +49,7 @@ def generate_launch_description():
             "height_of_movement":0.25,
             "endeffector_link": "right_tool0",
             "pin_out1":14,
-            "pin_out2":15,
+            "pin_out2":0,
             "arm_side":"right"
         },
         {"use_sim_time":True},
