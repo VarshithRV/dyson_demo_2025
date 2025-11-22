@@ -39,11 +39,11 @@ pick_and_place_server
 DESTINATION lib/${PROJECT_NAME}
 )
 
-add_executable(pick_and_place_local_perception_server src/pick_and_place_server.cpp)
-ament_target_dependencies(pick_and_place_server example_interfaces rclcpp geometry_msgs moveit_ros_planning_interface moveit_core 
+add_executable(pick_and_place_local_perception_server src/pick_and_place_local_perception_server.cpp)
+ament_target_dependencies(pick_and_place_local_perception_server example_interfaces rclcpp geometry_msgs moveit_ros_planning_interface moveit_core 
 ai_soft_touch_motion_planning_msgs ur_msgs open_set_object_detection_msgs)
 install(TARGETS
-pick_and_place_server
+pick_and_place_local_perception_server
 DESTINATION lib/${PROJECT_NAME}
 )
 
