@@ -15,6 +15,7 @@ find_package(example_interfaces REQUIRED)
 find_package(ur_msgs REQUIRED)
 find_package(controller_manager_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
+find_package(open_set_object_detection_msgs REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -32,7 +33,15 @@ DESTINATION lib/${PROJECT_NAME}
 
 add_executable(pick_and_place_server src/pick_and_place_server.cpp)
 ament_target_dependencies(pick_and_place_server example_interfaces rclcpp geometry_msgs moveit_ros_planning_interface moveit_core 
-ai_soft_touch_motion_planning_msgs ur_msgs)
+ai_soft_touch_motion_planning_msgs ur_msgs open_set_object_detection_msgs)
+install(TARGETS
+pick_and_place_server
+DESTINATION lib/${PROJECT_NAME}
+)
+
+add_executable(pick_and_place_local_perception_server src/pick_and_place_server.cpp)
+ament_target_dependencies(pick_and_place_server example_interfaces rclcpp geometry_msgs moveit_ros_planning_interface moveit_core 
+ai_soft_touch_motion_planning_msgs ur_msgs open_set_object_detection_msgs)
 install(TARGETS
 pick_and_place_server
 DESTINATION lib/${PROJECT_NAME}
