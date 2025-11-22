@@ -27,7 +27,7 @@ from rclpy.duration import Duration
 # Model parameters
 BOX_THRESHOLD = 0.35
 TEXT_THRESHOLD = 0.25
-TEXT_PROMPT = "blue_circle.red_triangle.green_square"
+TEXT_PROMPT = "blue_ball.yellow_ball.pink_ball"
 
 # Camera topic base namespaces (ROS 2)
 LEFT_CAMERA_NS = "/camera/left_camera"
@@ -365,23 +365,23 @@ class Deprojection(Node):
             object_position.x_max = int(xyxy[i][2])
             object_position.y_max = int(xyxy[i][3])
 
-            object_position.x_min_y_min = self.get_3d_position(
-                object_position.x_max,
-                object_position.y_min,
-                depth_image=left_depth_image,
-                camera_info=self.left_camera_info,
-                camera_model=self.left_camera_model,
-                depth_threshold=self.left_depth_threshold,
-            )
+            # object_position.x_min_y_min = self.get_3d_position(
+            #     object_position.x_max,
+            #     object_position.y_min,
+            #     depth_image=left_depth_image,
+            #     camera_info=self.left_camera_info,
+            #     camera_model=self.left_camera_model,
+            #     depth_threshold=self.left_depth_threshold,
+            # )
 
-            object_position.x_max_y_max = self.get_3d_position(
-                object_position.x_min,
-                object_position.y_max,
-                depth_image=left_depth_image,
-                camera_info=self.left_camera_info,
-                camera_model=self.left_camera_model,
-                depth_threshold=self.left_depth_threshold,
-            )
+            # object_position.x_max_y_max = self.get_3d_position(
+            #     object_position.x_min,
+            #     object_position.y_max,
+            #     depth_image=left_depth_image,
+            #     camera_info=self.left_camera_info,
+            #     camera_model=self.left_camera_model,
+            #     depth_threshold=self.left_depth_threshold,
+            # )
 
             result.object_position.append(object_position)
 
@@ -475,23 +475,23 @@ class Deprojection(Node):
             object_position.x_max = int(xyxy[i][2])
             object_position.y_max = int(xyxy[i][3])
 
-            object_position.x_min_y_min = self.get_3d_position(
-                object_position.x_max,
-                object_position.y_min,
-                depth_image=right_depth_image,
-                camera_info=self.right_camera_info,
-                camera_model=self.right_camera_model,
-                depth_threshold=self.right_depth_threshold,
-            )
+            # object_position.x_min_y_min = self.get_3d_position(
+            #     object_position.x_max,
+            #     object_position.y_min,
+            #     depth_image=right_depth_image,
+            #     camera_info=self.right_camera_info,
+            #     camera_model=self.right_camera_model,
+            #     depth_threshold=self.right_depth_threshold,
+            # )
 
-            object_position.x_max_y_max = self.get_3d_position(
-                object_position.x_min,
-                object_position.y_max,
-                depth_image=right_depth_image,
-                camera_info=self.right_camera_info,
-                camera_model=self.right_camera_model,
-                depth_threshold=self.right_depth_threshold,
-            )
+            # object_position.x_max_y_max = self.get_3d_position(
+            #     object_position.x_min,
+            #     object_position.y_max,
+            #     depth_image=right_depth_image,
+            #     camera_info=self.right_camera_info,
+            #     camera_model=self.right_camera_model,
+            #     depth_threshold=self.right_depth_threshold,
+            # )
 
             result.object_position.append(object_position)
 

@@ -12,7 +12,7 @@ from open_set_object_detection_msgs.srv import GetObjectLocations
 from std_msgs.msg import String
 from geometry_msgs.msg import PoseStamped
 
-TEXT_PROMPT = "blue_ball.yellow_ball.pink_ball"
+TEXT_PROMPT = "cyan_ball"
 
 
 class PerceptionAndPickClient(Node):
@@ -30,8 +30,6 @@ class PerceptionAndPickClient(Node):
         )
 
         # ---------- Pick client (RIGHT arm; rws by default) ----------
-        # Change this to "/rws_pick_and_place_server/pick_and_place"
-        # if you want to use the RWS end-effector.
         self.right_pick_client = self.create_client(
             Pick, "/rws_pick_and_place_server/pick_and_place"
         )
@@ -92,9 +90,10 @@ class PerceptionAndPickClient(Node):
         for i, obj in enumerate(objects):
             pose: PoseStamped = obj.pose
             p = pose.pose.position
-            cls = getattr(obj, "Class", "")
+            # Use the label field from ObjectPosition
+            label = getattr(obj, "label", "")
             self.get_logger().info(
-                f"[{i}] Class='{cls}', pos=({p.x:.3f}, {p.y:.3f}, {p.z:.3f})"
+                f"[{i}] label='{label}', pos=({p.x:.3f}, {p.y:.3f}, {p.z:.3f})"
             )
 
     # ------------------- User selection -------------------
@@ -144,16 +143,16 @@ class PerceptionAndPickClient(Node):
         req.object_position.y = position.y
         req.object_position.z = position.z
 
-        # Use object class as prompt (or any other string you want)
-        cls = getattr(obj, "Class", "")
-        req.prompt = cls if cls else "picked_object"
+        # --- KEY CHANGE: set Pick.srv prompt from the object's label ---
+        label = getattr(obj, "label", "")
+        req.prompt = label if label else "picked_object"
 
         # Use detection index as the request index
         req.index = idx
 
         self.get_logger().info(
             f"Sending Pick request for object {idx}: "
-            f"class='{cls}', pos=({position.x:.3f}, {position.y:.3f}, {position.z:.3f})"
+            f"label='{label}', pos=({position.x:.3f}, {position.y:.3f}, {position.z:.3f})"
         )
 
         future = self.right_pick_client.call_async(req)
