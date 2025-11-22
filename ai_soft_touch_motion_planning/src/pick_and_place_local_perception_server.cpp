@@ -328,7 +328,7 @@ public:
 
         geometry_msgs::msg::Pose pick;
 
-        if (future.wait_for(5s) != std::future_status::ready)
+        if (future.wait_for(10s) != std::future_status::ready)
         {
             RCLCPP_ERROR(node_->get_logger(), "Local perception timed out!");
             pick = approx_pick;

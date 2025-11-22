@@ -86,6 +86,8 @@ def generate_launch_description():
             "pin_out2":0,
             "arm_side":"left",
             "ft_threshold": 5.0,
+            "speed":0.01,
+            "pretouch_distance":0.1,
         },
         {"use_sim_time":True},
         ],

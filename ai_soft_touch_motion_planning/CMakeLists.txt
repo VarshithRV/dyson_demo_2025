@@ -49,7 +49,7 @@ DESTINATION lib/${PROJECT_NAME}
 
 add_executable(pick_and_place_ft_feedback_server src/pick_and_place_ft_feedback_server.cpp)
 ament_target_dependencies(pick_and_place_ft_feedback_server example_interfaces rclcpp geometry_msgs moveit_ros_planning_interface 
-moveit_core ai_soft_touch_motion_planning_msgs ur_msgs controller_manager_msgs std_srvs)
+moveit_core ai_soft_touch_motion_planning_msgs ur_msgs controller_manager_msgs std_srvs open_set_object_detection_msgs)
 install(TARGETS
 pick_and_place_ft_feedback_server
 DESTINATION lib/${PROJECT_NAME}
