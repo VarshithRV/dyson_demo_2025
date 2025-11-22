@@ -109,7 +109,7 @@ class PickPlace{
 
             print_state_server_= node_->create_service<example_interfaces::srv::Trigger>("~/print_robot_state",std::bind(&PickPlace::print_state,this,std::placeholders::_1,std::placeholders::_2));
             pick_and_place_server_ = node_->create_service<ai_soft_touch_motion_planning_msgs::srv::Pick>("~/pick_and_place",std::bind(&PickPlace::pick_and_place_server,this,std::placeholders::_1,std::placeholders::_2));
-            std::string io_service_name = arm_side_ + "_io_and_status_controller";
+            std::string io_service_name = arm_side_ + "_io_and_status_controller/set_io";
             set_io_client_ = node_->create_client<ur_msgs::srv::SetIO>(io_service_name);
 
             if(!set_io_client_->wait_for_service(3s))

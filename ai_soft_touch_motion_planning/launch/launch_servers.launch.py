@@ -118,13 +118,13 @@ def generate_launch_description():
     parameters=[
         robot_description_kinematics,
         {
-            "planning_group": "right_ur16e",
-            "shoulder_pan": 0.04691828027611484,
-            "shoulder_lift": -1.1132075333272593,
-            "elbow": -1.2901087525747499,
-            "wrist_1": -2.3206509305199208,
-            "wrist_2": 1.5723150119469158,
-            "wrist_3": -0.6135582260386983,
+        "planning_group": "right_ur16e",
+        "shoulder_pan": -0.5970662275897425,
+        "shoulder_lift": -1.6369577846922816,
+        "elbow": -0.9921365976333618,
+        "wrist_1": -2.0919186077513636,
+        "wrist_2": 1.566674828529358,
+        "wrist_3": 0.13598881661891937,
         },
         ],
     )

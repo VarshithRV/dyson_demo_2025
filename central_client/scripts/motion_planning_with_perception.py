@@ -29,11 +29,11 @@ class PerceptionAndPickClient(Node):
             GetObjectLocations, "right_get_object_locations"
         )
 
-        # ---------- Pick client (RIGHT arm; suction by default) ----------
+        # ---------- Pick client (RIGHT arm; rws by default) ----------
         # Change this to "/rws_pick_and_place_server/pick_and_place"
         # if you want to use the RWS end-effector.
         self.right_pick_client = self.create_client(
-            Pick, "/suction_pick_and_place_server/pick_and_place"
+            Pick, "/rws_pick_and_place_server/pick_and_place"
         )
 
     # ------------------- Helper: Trigger call -------------------
@@ -130,7 +130,7 @@ class PerceptionAndPickClient(Node):
     # ------------------- Pick call -------------------
 
     def call_right_pick(self, obj, idx: int):
-        service_name = "/suction_pick_and_place_server/pick_and_place"
+        service_name = "/rws_pick_and_place_server/pick_and_place"
         self.get_logger().info(f"Waiting for {service_name}...")
         if not self.right_pick_client.wait_for_service(timeout_sec=10.0):
             self.get_logger().error(f"{service_name} not available.")
