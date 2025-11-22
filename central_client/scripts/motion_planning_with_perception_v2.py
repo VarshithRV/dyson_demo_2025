@@ -20,18 +20,18 @@ class PerceptionAndPickClient(Node):
         super().__init__("perception_and_pick_client")
 
         # ---------- Trigger (motion state) clients ----------
-        self.right_preaction_client = self.create_client(
-            Trigger, "/right_preaction_server/move_to_state"
+        self.left_preaction_client = self.create_client(
+            Trigger, "/left_preaction_server/move_to_state"
         )
 
-        # ---------- Perception client (RIGHT camera) ----------
-        self.right_perception_client = self.create_client(
-            GetObjectLocations, "right_get_object_locations"
+        # ---------- Perception client (left camera) ----------
+        self.left_perception_client = self.create_client(
+            GetObjectLocations, "left_get_object_locations"
         )
 
-        # ---------- Pick client (RIGHT arm; rws by default) ----------
-        self.right_pick_client = self.create_client(
-            Pick, "/rws_pick_and_place_server/pick_and_place"
+        # ---------- Pick client (left arm; suction by default) ----------
+        self.left_pick_client = self.create_client(
+            Pick, "/suction_pick_and_place_server/pick_and_place"
         )
 
     # ------------------- Helper: Trigger call -------------------
@@ -64,16 +64,16 @@ class PerceptionAndPickClient(Node):
         req.prompt.data = prompt_str
         return req
 
-    def call_right_perception(self):
-        service_name = "right_get_object_locations"
+    def call_left_perception(self):
+        service_name = "left_get_object_locations"
         self.get_logger().info(f"Waiting for {service_name}...")
-        if not self.right_perception_client.wait_for_service(timeout_sec=10.0):
+        if not self.left_perception_client.wait_for_service(timeout_sec=10.0):
             self.get_logger().error(f"{service_name} not available.")
             return None
 
         req = self._make_perception_request(TEXT_PROMPT)
         self.get_logger().info(f"Calling {service_name} with prompt '{TEXT_PROMPT}'")
-        future = self.right_perception_client.call_async(req)
+        future = self.left_perception_client.call_async(req)
         rclpy.spin_until_future_complete(self, future)
 
         if future.result() is None:
@@ -86,7 +86,7 @@ class PerceptionAndPickClient(Node):
         return objects
 
     def _print_detected_objects(self, objects: List):
-        self.get_logger().info(f"Detected {len(objects)} objects from right camera.")
+        self.get_logger().info(f"Detected {len(objects)} objects from left camera.")
         for i, obj in enumerate(objects):
             pose: PoseStamped = obj.pose
             p = pose.pose.position
@@ -128,10 +128,10 @@ class PerceptionAndPickClient(Node):
 
     # ------------------- Pick call -------------------
 
-    def call_right_pick(self, obj, idx: int):
-        service_name = "/rws_pick_and_place_server/pick_and_place"
+    def call_left_pick(self, obj, idx: int):
+        service_name = "/suction_pick_and_place_server/pick_and_place"
         self.get_logger().info(f"Waiting for {service_name}...")
-        if not self.right_pick_client.wait_for_service(timeout_sec=10.0):
+        if not self.left_pick_client.wait_for_service(timeout_sec=10.0):
             self.get_logger().error(f"{service_name} not available.")
             return
 
@@ -155,7 +155,7 @@ class PerceptionAndPickClient(Node):
             f"label='{label}', pos=({position.x:.3f}, {position.y:.3f}, {position.z:.3f})"
         )
 
-        future = self.right_pick_client.call_async(req)
+        future = self.left_pick_client.call_async(req)
         rclpy.spin_until_future_complete(self, future)
 
         if future.result() is not None:
@@ -168,19 +168,19 @@ class PerceptionAndPickClient(Node):
     # ------------------- Full workflow -------------------
 
     def run_workflow(self):
-        # 1. Right arm preaction
-        self.get_logger().info("=== Step 1: Right arm preaction ===")
+        # 1. left arm preaction
+        self.get_logger().info("=== Step 1: left arm preaction ===")
         ok = self._call_trigger(
-            self.right_preaction_client,
-            "right_preaction_server/move_to_state",
+            self.left_preaction_client,
+            "left_preaction_server/move_to_state",
         )
         if not ok:
             self.get_logger().error("Preaction failed. Aborting workflow.")
             return
 
-        # 2. Right perception
-        self.get_logger().info("=== Step 2: Right perception ===")
-        objects = self.call_right_perception()
+        # 2. left perception
+        self.get_logger().info("=== Step 2: left perception ===")
+        objects = self.call_left_perception()
         if objects is None or len(objects) == 0:
             self.get_logger().warn("No objects detected. Aborting workflow.")
             return
@@ -192,11 +192,11 @@ class PerceptionAndPickClient(Node):
             self.get_logger().info("No objects selected. Workflow complete.")
             return
 
-        # 4. Pick & place each selected object with right arm
+        # 4. Pick & place each selected object with left arm
         self.get_logger().info("=== Step 4: Pick & place selected objects ===")
         for idx in indices:
             obj = objects[idx]
-            self.call_right_pick(obj, idx)
+            self.call_left_pick(obj, idx)
 
         self.get_logger().info("Workflow finished.")
 

@@ -357,7 +357,7 @@ public:
             if(!this->start_servo()){
                 RCLCPP_ERROR(node_->get_logger(),"Start servo failed, switching back controller");
                 if(!this->switch_back_controller())
-                RCLCPP_ERROR(node_->get_logger(),"Switching back controller failed");
+                    RCLCPP_ERROR(node_->get_logger(),"Switching back controller failed");
             }
             else{
                 this->zeroft();
@@ -486,37 +486,35 @@ public:
 
         geometry_msgs::msg::Pose pick;
 
-        // // Perception call from look pose
-        // auto get_object_locations_request =
-        //     std::make_shared<open_set_object_detection_msgs::srv::GetObjectLocations::Request>();
-        // get_object_locations_request->prompt.data = request->prompt;
+        // Perception call from look pose
+        auto get_object_locations_request =
+            std::make_shared<open_set_object_detection_msgs::srv::GetObjectLocations::Request>();
+        get_object_locations_request->prompt.data = request->prompt;
 
-        // auto future =
-        //     get_object_locations_client_->async_send_request(get_object_locations_request);
+        auto future =
+            get_object_locations_client_->async_send_request(get_object_locations_request);
 
 
-        // if (future.wait_for(5s) != std::future_status::ready)
-        // {
-        //     RCLCPP_ERROR(node_->get_logger(), "Local perception timed out!");
-        //     pick = approx_pick;
-        // }
-        // else
-        // {
-        //     auto resp = future.get();
-        //     if (resp->result.object_position.empty())
-        //     {
-        //         RCLCPP_ERROR(node_->get_logger(), "Perception returned no objects!");
-        //         pick = approx_pick;
-        //     }
-        //     else
-        //     {
-        //         pick.position.x = resp->result.object_position[0].pose.pose.position.x;
-        //         pick.position.y = resp->result.object_position[0].pose.pose.position.y;
-        //         pick.position.z = resp->result.object_position[0].pose.pose.position.z;
-        //     }
-        // }
-
-        pick = approx_pick;
+        if (future.wait_for(5s) != std::future_status::ready)
+        {
+            RCLCPP_ERROR(node_->get_logger(), "Local perception timed out!");
+            pick = approx_pick;
+        }
+        else
+        {
+            auto resp = future.get();
+            if (resp->result.object_position.empty())
+            {
+                RCLCPP_ERROR(node_->get_logger(), "Perception returned no objects!");
+                pick = approx_pick;
+            }
+            else
+            {
+                pick.position.x = resp->result.object_position[0].pose.pose.position.x;
+                pick.position.y = resp->result.object_position[0].pose.pose.position.y;
+                pick.position.z = resp->result.object_position[0].pose.pose.position.z;
+            }
+        }
 
         // Apply pick offsets + orientation
         pick.position.x += pick_offset_[0];
