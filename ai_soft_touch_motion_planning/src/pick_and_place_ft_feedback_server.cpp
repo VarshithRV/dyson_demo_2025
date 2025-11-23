@@ -490,6 +490,7 @@ public:
         auto get_object_locations_request =
             std::make_shared<open_set_object_detection_msgs::srv::GetObjectLocations::Request>();
         get_object_locations_request->prompt.data = request->prompt;
+        get_object_locations_request->is_local = true;
 
         auto future =
             get_object_locations_client_->async_send_request(get_object_locations_request);

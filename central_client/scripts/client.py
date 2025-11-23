@@ -90,6 +90,7 @@ class CentralClientNode(Node):
         req = GetObjectLocations.Request()
         req.prompt = String()
         req.prompt.data = prompt_str
+        req.is_local = False
         return req
 
     def call_right_perception(self):
