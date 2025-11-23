@@ -32,7 +32,7 @@ def generate_launch_description():
         {
             "planning_group": "right_ur16e",
             "place_x":0.161,
-            "place_y":0.637,
+            "place_y":0.587,
             "place_z":0.038,
             "orientation_w":0.038,
             "orientation_x":0.369,
@@ -66,13 +66,13 @@ def generate_launch_description():
         {
             "planning_group": "left_ur16e",
             "place_x":0.161,
-            "place_y":0.637,
+            "place_y":0.587,
             "place_z":0.038,
             "orientation_w":-0.030,
             "orientation_x":0.005,
             "orientation_y":0.999,
             "orientation_z":-0.011,
-            "pick_offset_x":0.005,
+            "pick_offset_x":-0.01,
             "pick_offset_y":0.01,
             "pick_offset_z":0.0,
             "look_offset_x":0.0,
@@ -85,7 +85,7 @@ def generate_launch_description():
             "pin_out1":12,
             "pin_out2":0,
             "arm_side":"left",
-            "ft_threshold": 10.0,
+            "ft_threshold": 17.0,
             "speed":0.13,
             "pretouch_distance":0.06,
         },
@@ -94,40 +94,40 @@ def generate_launch_description():
     )
 
     left_preaction_server = Node(
-    package="ai_soft_touch_motion_planning",
-    executable="predefined_state_server",
-    name="left_preaction_server",
-    output="screen",
-    parameters=[
-        robot_description_kinematics,
-        {
-            "planning_group": "left_ur16e",
-            "shoulder_pan": -2.370838467274801,
-            "shoulder_lift": -1.3852829945138474,
-            "elbow": 0.8208854834185999,
-            "wrist_1": -0.9787348669818421,
-            "wrist_2": -1.577686611806051,
-            "wrist_3": 0.7582406997680664,
-        },
-    ],
-    )   
+        package="ai_soft_touch_motion_planning",
+        executable="predefined_state_server",
+        name="left_preaction_server",
+        output="screen",
+        parameters=[
+            robot_description_kinematics,
+            {
+                "planning_group": "left_ur16e",
+                "shoulder_pan": 1.6606996059417725,
+                "shoulder_lift": -1.4407718938640137,
+                "elbow": -1.1456663608551025,
+                "wrist_1": -2.125268121758932,
+                "wrist_2": 1.45247220993042,
+                "wrist_3": 1.677489995956421,
+            },
+        ],
+    )
 
     right_preaction_server = Node(
-    package="ai_soft_touch_motion_planning",
-    executable="predefined_state_server",
-    name="right_preaction_server",
-    output="screen",
-    parameters=[
-        robot_description_kinematics,
-        {
-            "planning_group": "right_ur16e",
-            "shoulder_pan": -0.6716254393206995,
-            "shoulder_lift": -1.4663793754628678,
-            "elbow": -0.945048451423645,
-            "wrist_1": -2.2198287449278773,
-            "wrist_2": 1.6617790460586548,
-            "wrist_3": 0.09304250776767731,
-        },
+        package="ai_soft_touch_motion_planning",
+        executable="predefined_state_server",
+        name="right_preaction_server",
+        output="screen",
+        parameters=[
+            robot_description_kinematics,
+            {
+                "planning_group": "right_ur16e",
+                "shoulder_pan": -4.906626049672262,
+                "shoulder_lift": -1.626050134698385,
+                "elbow": 1.2541254202472132,
+                "wrist_1": -1.1249484878829499,
+                "wrist_2": -1.3437789122210901,
+                "wrist_3": -1.0042908827411097,
+            },
         ],
     )
 
@@ -140,12 +140,12 @@ def generate_launch_description():
             robot_description_kinematics,
             {
                 "planning_group": "left_ur16e",
-                "shoulder_pan": -3.7407785097705286,
-                "shoulder_lift": -1.8669382534422816,
-                "elbow": 2.030813995991842,
-                "wrist_1": -1.609297891656393,
-                "wrist_2": -1.2706669012652796,
-                "wrist_3": -1.3307812849627894,
+                "shoulder_pan": -0.1496956984149378,
+                "shoulder_lift": -1.468573884373047,
+                "elbow": -1.9538769721984863,
+                "wrist_1": -1.2700193685344239,
+                "wrist_2": 1.9041476249694824,
+                "wrist_3": -1.182901684437887,
             },
         ],
     )
@@ -159,15 +159,15 @@ def generate_launch_description():
             robot_description_kinematics,
             {
                 "planning_group": "right_ur16e",
-                "shoulder_pan": 0.5529513359069824,
-                "shoulder_lift": -1.1297608476928254,
-                "elbow": -2.2185397148132324,
-                "wrist_1": -1.0740774732879181,
-                "wrist_2": 1.1414644718170166,
-                "wrist_3": 2.0575029850006104,
+                "shoulder_pan": -3.13219124475588,
+                "shoulder_lift": -1.8146683178343714,
+                "elbow": 1.9976828734027308,
+                "wrist_1": -1.8108145199217738,
+                "wrist_2": -2.130192581807272,
+                "wrist_3": 0.8935091495513916,
             },
         ],
-)
+    )
 
     return LaunchDescription([
         rws_pick_and_place_server,

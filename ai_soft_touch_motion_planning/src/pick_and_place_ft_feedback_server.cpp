@@ -348,7 +348,7 @@ public:
 
     // ft feedback downward movement
     void touch_object(){
-        std::this_thread::sleep_for(1s);
+        // std::this_thread::sleep_for(1s);
         if(!this->switch_controller()){
             RCLCPP_ERROR(node_->get_logger(),"Switching controller failed");
             return;
@@ -370,7 +370,7 @@ public:
                     std::this_thread::sleep_for(50ms);
                 }
                 this->stop_servo();
-                std::this_thread::sleep_for(1s);
+                // std::this_thread::sleep_for(1s);
                 this->switch_back_controller();
             }
         }

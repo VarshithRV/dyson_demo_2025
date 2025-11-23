@@ -21,7 +21,7 @@ from openai import OpenAI
 
 
 # Prompt used for the perception server (shapes to detect)
-TEXT_PROMPT = "blue_circle.red_triangle.green_square"
+TEXT_PROMPT = "blue_circle,red_hex,green_circle,green_rectangle,pink_sphere,yellow_sphere,cyan_sphere"
 
 
 class CentralClientNode(Node):

@@ -12,7 +12,7 @@ from open_set_object_detection_msgs.srv import GetObjectLocations
 from std_msgs.msg import String
 from geometry_msgs.msg import PoseStamped
 
-TEXT_PROMPT = "red_hexagon"
+TEXT_PROMPT = "green_circle"
 
 
 class PerceptionAndPickClient(Node):
