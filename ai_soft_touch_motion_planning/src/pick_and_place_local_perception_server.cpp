@@ -22,6 +22,9 @@
 #include "moveit_msgs/msg/robot_trajectory.hpp"
 #include "rmw/qos_profiles.h"
 
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+
 using namespace std::chrono_literals;
 using moveit::planning_interface::MoveGroupInterface;
 
@@ -68,6 +71,28 @@ public:
         orientation_.push_back(node_->get_parameter("orientation_x").as_double());
         orientation_.push_back(node_->get_parameter("orientation_y").as_double());
         orientation_.push_back(node_->get_parameter("orientation_z").as_double());
+
+        // Normalize orientation once and store as param_orientation_
+        {
+            tf2::Quaternion q(
+                orientation_[1],  // x
+                orientation_[2],  // y
+                orientation_[3],  // z
+                orientation_[0]); // w
+
+            if (q.length2() > 1e-8)
+            {
+                q.normalize();
+            }
+            else
+            {
+                RCLCPP_WARN(node_->get_logger(),
+                            "Orientation parameter nearly zero, using identity quaternion");
+                q.setRPY(0.0, 0.0, 0.0);
+            }
+
+            param_orientation_ = tf2::toMsg(q);
+        }
 
         place_position_.push_back(node_->get_parameter("place_x").as_double());
         place_position_.push_back(node_->get_parameter("place_y").as_double());
@@ -275,17 +300,8 @@ public:
         move_group_interface_->setStartStateToCurrentState();
         auto current_pose = this->move_group_interface_->getCurrentPose().pose;
 
-        double orientation_norm = std::sqrt(
-            orientation_[0] * orientation_[0] +
-            orientation_[1] * orientation_[1] +
-            orientation_[2] * orientation_[2] +
-            orientation_[3] * orientation_[3]);
-
         approx_pick.position = request->object_position;
-        approx_pick.orientation.w = orientation_[0] / orientation_norm;
-        approx_pick.orientation.x = orientation_[1] / orientation_norm;
-        approx_pick.orientation.y = orientation_[2] / orientation_norm;
-        approx_pick.orientation.z = orientation_[3] / orientation_norm;
+        approx_pick.orientation = param_orientation_;
 
         geometry_msgs::msg::Pose place;
         // Grid pattern on place_x, place_y
@@ -293,10 +309,7 @@ public:
         bool index_even = ((request->index % 2) == 0);
         place.position.y = place_position_[1] - (index_even ? 0.0 : place_step_y_);
         place.position.z = place_position_[2];
-        place.orientation.w = orientation_[0]/ orientation_norm;
-        place.orientation.x = orientation_[1]/ orientation_norm;
-        place.orientation.y = orientation_[2]/ orientation_norm;
-        place.orientation.z = orientation_[3]/ orientation_norm;
+        place.orientation = param_orientation_;
 
         // Move to "look" pose first
         move_group_interface_->setStartStateToCurrentState();
@@ -322,6 +335,7 @@ public:
         auto get_object_locations_request =
             std::make_shared<open_set_object_detection_msgs::srv::GetObjectLocations::Request>();
         get_object_locations_request->prompt.data = request->prompt;
+        get_object_locations_request->is_local = true;
 
         auto future =
             get_object_locations_client_->async_send_request(get_object_locations_request);
@@ -354,10 +368,7 @@ public:
         pick.position.y += pick_offset_[1];
         pick.position.z += pick_offset_[2];
 
-        pick.orientation.w = orientation_[0] / orientation_norm;
-        pick.orientation.x = orientation_[1] / orientation_norm;
-        pick.orientation.y = orientation_[2] / orientation_norm;
-        pick.orientation.z = orientation_[3] / orientation_norm;
+        pick.orientation = param_orientation_;
 
         // Cartesian move to pick (xy first, then down)
         waypoints.clear();
@@ -484,6 +495,7 @@ private:
     std::string endeffector_link_;
     double place_step_x_, place_step_y_;
     int pin_out1_, pin_out2_;
+    geometry_msgs::msg::Quaternion param_orientation_;
 };
 
 int main(int argc, char *argv[])

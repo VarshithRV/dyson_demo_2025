@@ -26,6 +26,8 @@
   <depend>controller_manager_msgs</depend>
   <depend>std_srvs</depend>
   <depend>open_set_object_detection_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_geometry_msgs</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
