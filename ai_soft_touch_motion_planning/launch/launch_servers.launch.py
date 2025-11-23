@@ -40,7 +40,7 @@ def generate_launch_description():
             "orientation_z":0.000,
             "pick_offset_x":0.0,
             "pick_offset_y":0.0,
-            "pick_offset_z":0.0,
+            "pick_offset_z":-0.02,
             "look_offset_x":0.0,
             "look_offset_y":0.1,
             "look_offset_z":0.32,
