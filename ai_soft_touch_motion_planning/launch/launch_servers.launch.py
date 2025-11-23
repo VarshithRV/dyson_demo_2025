@@ -21,7 +21,6 @@ def generate_launch_description():
             "kinematics_solver_search_resolution": 0.005,
             "kinematics_solver_timeout": 0.005,}
     }}
-
     rws_pick_and_place_server = Node(
     package="ai_soft_touch_motion_planning",
     executable="pick_and_place_local_perception_server",
@@ -31,9 +30,9 @@ def generate_launch_description():
         robot_description_kinematics,
         {
             "planning_group": "right_ur16e",
-            "place_x":0.161,
-            "place_y":0.587,
-            "place_z":0.038,
+            "place_x":0.062,
+            "place_y":0.608,
+            "place_z":0.014,
             "orientation_w":0.002,
             "orientation_x":0.396,
             "orientation_y":0.918,
@@ -65,9 +64,9 @@ def generate_launch_description():
         robot_description_kinematics,
         {
             "planning_group": "left_ur16e",
-            "place_x":0.161,
-            "place_y":0.587,
-            "place_z":0.038,
+            "place_x":0.062,
+            "place_y":0.608,
+            "place_z":0.014,
             "orientation_w":0.001,
             "orientation_x":0.020,
             "orientation_y":1.000,
