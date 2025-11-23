@@ -21,7 +21,9 @@ from openai import OpenAI
 
 
 # Prompt used for the perception server (shapes to detect)
-TEXT_PROMPT = "blue_circle,red_hex,green_circle,green_rectangle,pink_sphere,yellow_sphere,cyan_sphere"
+# TEXT_PROMPT = "blue_circle,red_hex,green_circle,green_rectangle,pink_sphere,yellow_sphere,cyan_sphere"
+TEXT_PROMPT = "blue_circle,red_hex,green_circle,green_rectangle,balls"
+# TEXT_PROMPT = "objects"
 
 
 class CentralClientNode(Node):
@@ -160,7 +162,9 @@ class CentralClientNode(Node):
             '"pick_using_left_arm", "pick_using_right_arm", chose the appropriate action for the object '
             'the 3 Dimensional objects are picked with the right arm and the 2 Dimensional objects are picked with the left arm'
             'The only 3 Dimensional objects in the scene are 3 spheres and they look smaller than the 2 Dimensional ones'
+            'the pink, yellow and cyan objects are 3d and the red, green and blue are 2d'
             'The labels on the annotated images are not always right, so use your judgement'
+            'If there are two objects with very similar locations, it probably means that one of it is a false positive, dont use both the objects in the pick list'
             'depending on the prompt. The output needs to be in the following formats : '
             '{"pick_using_left_arm":[<object_id1>,<object_id2>, ...],'
             '"pick_using_right_arm":[<object_id3>, <object_id4>, ... ]}, this output means that the objects_id '
