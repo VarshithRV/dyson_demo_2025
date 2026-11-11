@@ -1,0 +1,296 @@
+    error: subprocess-exited-with-error
+    
+    × python setup.py develop did not run successfully.
+    │ exit code: 1
+    ╰─> [140 lines of output]
+        Building wheel groundingdino-0.1.0
+        Compiling with CUDA
+        running develop
+        /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+          warnings.warn(
+        /usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+          warnings.warn(
+        running egg_info
+        creating groundingdino.egg-info
+        writing groundingdino.egg-info/PKG-INFO
+        writing dependency_links to groundingdino.egg-info/dependency_links.txt
+        writing requirements to groundingdino.egg-info/requires.txt
+        writing top-level names to groundingdino.egg-info/top_level.txt
+        writing manifest file 'groundingdino.egg-info/SOURCES.txt'
+        reading manifest file 'groundingdino.egg-info/SOURCES.txt'
+        adding license file 'LICENSE'
+        writing manifest file 'groundingdino.egg-info/SOURCES.txt'
+        running build_ext
+        W1112 05:37:10.894000 166804 torch/utils/cpp_extension.py:535] There are no x86_64-linux-gnu-g++ version bounds defined for CUDA version 12.8
+        building 'groundingdino._C' extension
+        creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build
+        creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10
+        creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home
+        creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda
+        creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh
+        creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src
+        creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025
+        creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO
+        creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino
+        creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models
+        creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO
+        creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc
+        creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn
+        [1/4] /usr/local/cuda-12.8/bin/nvcc --generate-dependencies-with-compile --dependency-output /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/cuda_version.o.d -DWITH_CUDA -I/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/usr/local/cuda-12.8/include -I/usr/include/python3.10 -c -c /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/cuda_version.cu -o /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/cuda_version.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -DCUDA_HAS_FP16=1 -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ -DTORCH_API_INCLUDE_EXTENSION_H -DTORCH_EXTENSION_NAME=_C -gencode=arch=compute_89,code=compute_89 -gencode=arch=compute_89,code=sm_89 -std=c++17
+        [2/4] /usr/local/cuda-12.8/bin/nvcc --generate-dependencies-with-compile --dependency-output /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.o.d -DWITH_CUDA -I/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/usr/local/cuda-12.8/include -I/usr/include/python3.10 -c -c /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu -o /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -DCUDA_HAS_FP16=1 -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ -DTORCH_API_INCLUDE_EXTENSION_H -DTORCH_EXTENSION_NAME=_C -gencode=arch=compute_89,code=compute_89 -gencode=arch=compute_89,code=sm_89 -std=c++17
+        FAILED: [code=2] /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.o
+        /usr/local/cuda-12.8/bin/nvcc --generate-dependencies-with-compile --dependency-output /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.o.d -DWITH_CUDA -I/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/usr/local/cuda-12.8/include -I/usr/include/python3.10 -c -c /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu -o /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -DCUDA_HAS_FP16=1 -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ -DTORCH_API_INCLUDE_EXTENSION_H -DTORCH_EXTENSION_NAME=_C -gencode=arch=compute_89,code=compute_89 -gencode=arch=compute_89,code=sm_89 -std=c++17
+        /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu(35): error: expression must have class type but it has type "c10::ScalarType"
+              do { ::c10::detail::deprecated_AT_ASSERTM(); if (!(value.scalar_type().is_cuda())) { ::c10::detail::torchInternalAssertFail( __func__, "/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu", static_cast<uint32_t>(35), "value.scalar_type().is_cuda()" " INTERNAL ASSERT FAILED at " "\"/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu\"" ":" "35" ", please report a bug to PyTorch. ", c10::str("value must be a CUDA tensor")); }; } while (false);
+                                                                 ^
+        
+        /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu(101): error: expression must have class type but it has type "c10::ScalarType"
+              do { ::c10::detail::deprecated_AT_ASSERTM(); if (!(value.scalar_type().is_cuda())) { ::c10::detail::torchInternalAssertFail( __func__, "/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu", static_cast<uint32_t>(101), "value.scalar_type().is_cuda()" " INTERNAL ASSERT FAILED at " "\"/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu\"" ":" "101" ", please report a bug to PyTorch. ", c10::str("value must be a CUDA tensor")); }; } while (false);
+                                                                 ^
+        
+        2 errors detected in the compilation of "/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu".
+        [3/4] c++ -MMD -MF /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cpu.o.d -Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O2 -Wall -g -fstack-protector-strong -Wformat -Werror=format-security -g -fwrapv -O2 -g -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -fPIC -DWITH_CUDA -I/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/usr/local/cuda-12.8/include -I/usr/include/python3.10 -c -c /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cpu.cpp -o /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cpu.o -DTORCH_API_INCLUDE_EXTENSION_H -DTORCH_EXTENSION_NAME=_C -std=c++17
+        [4/4] c++ -MMD -MF /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/vision.o.d -Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O2 -Wall -g -fstack-protector-strong -Wformat -Werror=format-security -g -fwrapv -O2 -g -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -fPIC -DWITH_CUDA -I/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/usr/local/cuda-12.8/include -I/usr/include/python3.10 -c -c /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/vision.cpp -o /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/vision.o -DTORCH_API_INCLUDE_EXTENSION_H -DTORCH_EXTENSION_NAME=_C -std=c++17
+        In file included from /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/vision.cpp:3:
+        /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn.h: In function ‘at::Tensor groundingdino::ms_deform_attn_forward(const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, int)’:
+        /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn.h:30:19: warning: ‘at::DeprecatedTypeProperties& at::Tensor::type() const’ is deprecated: Tensor.type() is deprecated. Instead use Tensor.options(), which in many cases (e.g. in a constructor) is a drop-in replacement. If you were using data from type(), that is now available from Tensor itself, so instead of tensor.type().scalar_type(), use tensor.scalar_type() instead and instead of tensor.type().backend() use tensor.device(). [-Wdeprecated-declarations]
+           30 |     if (value.type().is_cuda())
+              |         ~~~~~~~~~~^~
+        In file included from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/ATen/core/Tensor.h:4,
+                         from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/ATen/Tensor.h:4,
+                         from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/autograd/function_hook.h:4,
+                         from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/autograd/cpp_hook.h:3,
+                         from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/autograd/variable.h:7,
+                         from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/autograd/autograd.h:4,
+                         from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include/torch/autograd.h:4,
+                         from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include/torch/all.h:8,
+                         from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/extension.h:6,
+                         from /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cpu.h:12,
+                         from /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn.h:13,
+                         from /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/vision.cpp:3:
+        /home/barracuda/.local/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:229:30: note: declared here
+          229 |   DeprecatedTypeProperties & type() const {
+              |                              ^~~~
+        In file included from /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/vision.cpp:3:
+        /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn.h: In function ‘std::vector<at::Tensor> groundingdino::ms_deform_attn_backward(const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, int)’:
+        /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn.h:52:19: warning: ‘at::DeprecatedTypeProperties& at::Tensor::type() const’ is deprecated: Tensor.type() is deprecated. Instead use Tensor.options(), which in many cases (e.g. in a constructor) is a drop-in replacement. If you were using data from type(), that is now available from Tensor itself, so instead of tensor.type().scalar_type(), use tensor.scalar_type() instead and instead of tensor.type().backend() use tensor.device(). [-Wdeprecated-declarations]
+           52 |     if (value.type().is_cuda())
+              |         ~~~~~~~~~~^~
+        In file included from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/ATen/core/Tensor.h:4,
+                         from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/ATen/Tensor.h:4,
+                         from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/autograd/function_hook.h:4,
+                         from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/autograd/cpp_hook.h:3,
+                         from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/autograd/variable.h:7,
+                         from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/autograd/autograd.h:4,
+                         from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include/torch/autograd.h:4,
+                         from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include/torch/all.h:8,
+                         from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/extension.h:6,
+                         from /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cpu.h:12,
+                         from /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn.h:13,
+                         from /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/vision.cpp:3:
+        /home/barracuda/.local/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:229:30: note: declared here
+          229 |   DeprecatedTypeProperties & type() const {
+              |                              ^~~~
+        ninja: build stopped: subcommand failed.
+        Traceback (most recent call last):
+          File "/home/barracuda/.local/lib/python3.10/site-packages/torch/utils/cpp_extension.py", line 2693, in _run_ninja_build
+            subprocess.run(
+          File "/usr/lib/python3.10/subprocess.py", line 526, in run
+            raise CalledProcessError(retcode, process.args,
+        subprocess.CalledProcessError: Command '['ninja', '-v']' returned non-zero exit status 2.
+        
+        The above exception was the direct cause of the following exception:
+        
+        Traceback (most recent call last):
+          File "<string>", line 2, in <module>
+          File "<pip-setuptools-caller>", line 34, in <module>
+          File "/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/setup.py", line 204, in <module>
+            setup(
+          File "/usr/lib/python3/dist-packages/setuptools/__init__.py", line 153, in setup
+            return distutils.core.setup(**attrs)
+          File "/usr/lib/python3.10/distutils/core.py", line 148, in setup
+            dist.run_commands()
+          File "/usr/lib/python3.10/distutils/dist.py", line 966, in run_commands
+            self.run_command(cmd)
+          File "/usr/lib/python3.10/distutils/dist.py", line 985, in run_command
+            cmd_obj.run()
+          File "/usr/lib/python3/dist-packages/setuptools/command/develop.py", line 34, in run
+            self.install_for_development()
+          File "/usr/lib/python3/dist-packages/setuptools/command/develop.py", line 114, in install_for_development
+            self.run_command('build_ext')
+          File "/usr/lib/python3.10/distutils/cmd.py", line 313, in run_command
+            self.distribution.run_command(command)
+          File "/usr/lib/python3.10/distutils/dist.py", line 985, in run_command
+            cmd_obj.run()
+          File "/usr/lib/python3/dist-packages/setuptools/command/build_ext.py", line 79, in run
+            _build_ext.run(self)
+          File "/usr/lib/python3.10/distutils/command/build_ext.py", line 340, in run
+            self.build_extensions()
+          File "/home/barracuda/.local/lib/python3.10/site-packages/torch/utils/cpp_extension.py", line 1143, in build_extensions
+            build_ext.build_extensions(self)
+          File "/usr/lib/python3.10/distutils/command/build_ext.py", line 449, in build_extensions
+            self._build_extensions_serial()
+          File "/usr/lib/python3.10/distutils/command/build_ext.py", line 474, in _build_extensions_serial
+            self.build_extension(ext)
+          File "/usr/lib/python3/dist-packages/setuptools/command/build_ext.py", line 202, in build_extension
+            _build_ext.build_extension(self, ext)
+          File "/usr/lib/python3.10/distutils/command/build_ext.py", line 529, in build_extension
+            objects = self.compiler.compile(sources,
+          File "/home/barracuda/.local/lib/python3.10/site-packages/torch/utils/cpp_extension.py", line 900, in unix_wrap_ninja_compile
+            _write_ninja_file_and_compile_objects(
+          File "/home/barracuda/.local/lib/python3.10/site-packages/torch/utils/cpp_extension.py", line 2297, in _write_ninja_file_and_compile_objects
+            _run_ninja_build(
+          File "/home/barracuda/.local/lib/python3.10/site-packages/torch/utils/cpp_extension.py", line 2710, in _run_ninja_build
+            raise RuntimeError(message) from e
+        RuntimeError: Error compiling objects for extension
+        [end of output]
+    
+    note: This error originates from a subprocess, and is likely not a problem with pip.
+error: subprocess-exited-with-error
+
+× python setup.py develop did not run successfully.
+│ exit code: 1
+╰─> [140 lines of output]
+    Building wheel groundingdino-0.1.0
+    Compiling with CUDA
+    running develop
+    /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+      warnings.warn(
+    /usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+      warnings.warn(
+    running egg_info
+    creating groundingdino.egg-info
+    writing groundingdino.egg-info/PKG-INFO
+    writing dependency_links to groundingdino.egg-info/dependency_links.txt
+    writing requirements to groundingdino.egg-info/requires.txt
+    writing top-level names to groundingdino.egg-info/top_level.txt
+    writing manifest file 'groundingdino.egg-info/SOURCES.txt'
+    reading manifest file 'groundingdino.egg-info/SOURCES.txt'
+    adding license file 'LICENSE'
+    writing manifest file 'groundingdino.egg-info/SOURCES.txt'
+    running build_ext
+    W1112 05:37:10.894000 166804 torch/utils/cpp_extension.py:535] There are no x86_64-linux-gnu-g++ version bounds defined for CUDA version 12.8
+    building 'groundingdino._C' extension
+    creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build
+    creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10
+    creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home
+    creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda
+    creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh
+    creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src
+    creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025
+    creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO
+    creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino
+    creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models
+    creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO
+    creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc
+    creating /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn
+    [1/4] /usr/local/cuda-12.8/bin/nvcc --generate-dependencies-with-compile --dependency-output /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/cuda_version.o.d -DWITH_CUDA -I/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/usr/local/cuda-12.8/include -I/usr/include/python3.10 -c -c /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/cuda_version.cu -o /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/cuda_version.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -DCUDA_HAS_FP16=1 -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ -DTORCH_API_INCLUDE_EXTENSION_H -DTORCH_EXTENSION_NAME=_C -gencode=arch=compute_89,code=compute_89 -gencode=arch=compute_89,code=sm_89 -std=c++17
+    [2/4] /usr/local/cuda-12.8/bin/nvcc --generate-dependencies-with-compile --dependency-output /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.o.d -DWITH_CUDA -I/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/usr/local/cuda-12.8/include -I/usr/include/python3.10 -c -c /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu -o /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -DCUDA_HAS_FP16=1 -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ -DTORCH_API_INCLUDE_EXTENSION_H -DTORCH_EXTENSION_NAME=_C -gencode=arch=compute_89,code=compute_89 -gencode=arch=compute_89,code=sm_89 -std=c++17
+    FAILED: [code=2] /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.o
+    /usr/local/cuda-12.8/bin/nvcc --generate-dependencies-with-compile --dependency-output /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.o.d -DWITH_CUDA -I/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/usr/local/cuda-12.8/include -I/usr/include/python3.10 -c -c /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu -o /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -DCUDA_HAS_FP16=1 -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ -DTORCH_API_INCLUDE_EXTENSION_H -DTORCH_EXTENSION_NAME=_C -gencode=arch=compute_89,code=compute_89 -gencode=arch=compute_89,code=sm_89 -std=c++17
+    /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu(35): error: expression must have class type but it has type "c10::ScalarType"
+          do { ::c10::detail::deprecated_AT_ASSERTM(); if (!(value.scalar_type().is_cuda())) { ::c10::detail::torchInternalAssertFail( __func__, "/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu", static_cast<uint32_t>(35), "value.scalar_type().is_cuda()" " INTERNAL ASSERT FAILED at " "\"/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu\"" ":" "35" ", please report a bug to PyTorch. ", c10::str("value must be a CUDA tensor")); }; } while (false);
+                                                             ^
+    
+    /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu(101): error: expression must have class type but it has type "c10::ScalarType"
+          do { ::c10::detail::deprecated_AT_ASSERTM(); if (!(value.scalar_type().is_cuda())) { ::c10::detail::torchInternalAssertFail( __func__, "/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu", static_cast<uint32_t>(101), "value.scalar_type().is_cuda()" " INTERNAL ASSERT FAILED at " "\"/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu\"" ":" "101" ", please report a bug to PyTorch. ", c10::str("value must be a CUDA tensor")); }; } while (false);
+                                                             ^
+    
+    2 errors detected in the compilation of "/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.cu".
+    [3/4] c++ -MMD -MF /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cpu.o.d -Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O2 -Wall -g -fstack-protector-strong -Wformat -Werror=format-security -g -fwrapv -O2 -g -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -fPIC -DWITH_CUDA -I/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/usr/local/cuda-12.8/include -I/usr/include/python3.10 -c -c /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cpu.cpp -o /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cpu.o -DTORCH_API_INCLUDE_EXTENSION_H -DTORCH_EXTENSION_NAME=_C -std=c++17
+    [4/4] c++ -MMD -MF /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/vision.o.d -Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O2 -Wall -g -fstack-protector-strong -Wformat -Werror=format-security -g -fwrapv -O2 -g -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -fPIC -DWITH_CUDA -I/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include -I/home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/usr/local/cuda-12.8/include -I/usr/include/python3.10 -c -c /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/vision.cpp -o /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/build/temp.linux-x86_64-3.10/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/vision.o -DTORCH_API_INCLUDE_EXTENSION_H -DTORCH_EXTENSION_NAME=_C -std=c++17
+    In file included from /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/vision.cpp:3:
+    /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn.h: In function ‘at::Tensor groundingdino::ms_deform_attn_forward(const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, int)’:
+    /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn.h:30:19: warning: ‘at::DeprecatedTypeProperties& at::Tensor::type() const’ is deprecated: Tensor.type() is deprecated. Instead use Tensor.options(), which in many cases (e.g. in a constructor) is a drop-in replacement. If you were using data from type(), that is now available from Tensor itself, so instead of tensor.type().scalar_type(), use tensor.scalar_type() instead and instead of tensor.type().backend() use tensor.device(). [-Wdeprecated-declarations]
+       30 |     if (value.type().is_cuda())
+          |         ~~~~~~~~~~^~
+    In file included from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/ATen/core/Tensor.h:4,
+                     from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/ATen/Tensor.h:4,
+                     from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/autograd/function_hook.h:4,
+                     from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/autograd/cpp_hook.h:3,
+                     from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/autograd/variable.h:7,
+                     from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/autograd/autograd.h:4,
+                     from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include/torch/autograd.h:4,
+                     from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include/torch/all.h:8,
+                     from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/extension.h:6,
+                     from /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cpu.h:12,
+                     from /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn.h:13,
+                     from /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/vision.cpp:3:
+    /home/barracuda/.local/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:229:30: note: declared here
+      229 |   DeprecatedTypeProperties & type() const {
+          |                              ^~~~
+    In file included from /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/vision.cpp:3:
+    /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn.h: In function ‘std::vector<at::Tensor> groundingdino::ms_deform_attn_backward(const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, int)’:
+    /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn.h:52:19: warning: ‘at::DeprecatedTypeProperties& at::Tensor::type() const’ is deprecated: Tensor.type() is deprecated. Instead use Tensor.options(), which in many cases (e.g. in a constructor) is a drop-in replacement. If you were using data from type(), that is now available from Tensor itself, so instead of tensor.type().scalar_type(), use tensor.scalar_type() instead and instead of tensor.type().backend() use tensor.device(). [-Wdeprecated-declarations]
+       52 |     if (value.type().is_cuda())
+          |         ~~~~~~~~~~^~
+    In file included from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/ATen/core/Tensor.h:4,
+                     from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/ATen/Tensor.h:4,
+                     from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/autograd/function_hook.h:4,
+                     from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/autograd/cpp_hook.h:3,
+                     from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/autograd/variable.h:7,
+                     from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/autograd/autograd.h:4,
+                     from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include/torch/autograd.h:4,
+                     from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/csrc/api/include/torch/all.h:8,
+                     from /home/barracuda/.local/lib/python3.10/site-packages/torch/include/torch/extension.h:6,
+                     from /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cpu.h:12,
+                     from /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn.h:13,
+                     from /home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/groundingdino/models/GroundingDINO/csrc/vision.cpp:3:
+    /home/barracuda/.local/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:229:30: note: declared here
+      229 |   DeprecatedTypeProperties & type() const {
+          |                              ^~~~
+    ninja: build stopped: subcommand failed.
+    Traceback (most recent call last):
+      File "/home/barracuda/.local/lib/python3.10/site-packages/torch/utils/cpp_extension.py", line 2693, in _run_ninja_build
+        subprocess.run(
+      File "/usr/lib/python3.10/subprocess.py", line 526, in run
+        raise CalledProcessError(retcode, process.args,
+    subprocess.CalledProcessError: Command '['ninja', '-v']' returned non-zero exit status 2.
+    
+    The above exception was the direct cause of the following exception:
+    
+    Traceback (most recent call last):
+      File "<string>", line 2, in <module>
+      File "<pip-setuptools-caller>", line 34, in <module>
+      File "/home/barracuda/ros2_ws_varsh/src/dyson_demo_2025/GroundingDINO/setup.py", line 204, in <module>
+        setup(
+      File "/usr/lib/python3/dist-packages/setuptools/__init__.py", line 153, in setup
+        return distutils.core.setup(**attrs)
+      File "/usr/lib/python3.10/distutils/core.py", line 148, in setup
+        dist.run_commands()
+      File "/usr/lib/python3.10/distutils/dist.py", line 966, in run_commands
+        self.run_command(cmd)
+      File "/usr/lib/python3.10/distutils/dist.py", line 985, in run_command
+        cmd_obj.run()
+      File "/usr/lib/python3/dist-packages/setuptools/command/develop.py", line 34, in run
+        self.install_for_development()
+      File "/usr/lib/python3/dist-packages/setuptools/command/develop.py", line 114, in install_for_development
+        self.run_command('build_ext')
+      File "/usr/lib/python3.10/distutils/cmd.py", line 313, in run_command
+        self.distribution.run_command(command)
+      File "/usr/lib/python3.10/distutils/dist.py", line 985, in run_command
+        cmd_obj.run()
+      File "/usr/lib/python3/dist-packages/setuptools/command/build_ext.py", line 79, in run
+        _build_ext.run(self)
+      File "/usr/lib/python3.10/distutils/command/build_ext.py", line 340, in run
+        self.build_extensions()
+      File "/home/barracuda/.local/lib/python3.10/site-packages/torch/utils/cpp_extension.py", line 1143, in build_extensions
+        build_ext.build_extensions(self)
+      File "/usr/lib/python3.10/distutils/command/build_ext.py", line 449, in build_extensions
+        self._build_extensions_serial()
+      File "/usr/lib/python3.10/distutils/command/build_ext.py", line 474, in _build_extensions_serial
+        self.build_extension(ext)
+      File "/usr/lib/python3/dist-packages/setuptools/command/build_ext.py", line 202, in build_extension
+        _build_ext.build_extension(self, ext)
+      File "/usr/lib/python3.10/distutils/command/build_ext.py", line 529, in build_extension
+        objects = self.compiler.compile(sources,
+      File "/home/barracuda/.local/lib/python3.10/site-packages/torch/utils/cpp_extension.py", line 900, in unix_wrap_ninja_compile
+        _write_ninja_file_and_compile_objects(
+      File "/home/barracuda/.local/lib/python3.10/site-packages/torch/utils/cpp_extension.py", line 2297, in _write_ninja_file_and_compile_objects
+        _run_ninja_build(
+      File "/home/barracuda/.local/lib/python3.10/site-packages/torch/utils/cpp_extension.py", line 2710, in _run_ninja_build
+        raise RuntimeError(message) from e
+    RuntimeError: Error compiling objects for extension
+    [end of output]
+
+note: This error originates from a subprocess, and is likely not a problem with pip.
