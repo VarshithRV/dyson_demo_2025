@@ -6,8 +6,8 @@ from typing import List, Dict, Any
 import rclpy
 from rclpy.node import Node
 
-from example_interfaces.srv import Trigger
-from ai_soft_touch_motion_planning_msgs.srv import Pick
+from std_srvs.srv import Trigger
+from motion_planning_abstractions_msgs.srv import Pick
 from open_set_object_detection_msgs.srv import GetObjectLocations
 from std_msgs.msg import String
 from geometry_msgs.msg import PoseStamped
@@ -293,7 +293,7 @@ class CentralClientNode(Node):
         # left_arm -> rest
         self.get_logger().info("=== Step 1: left arm -> rest ===")
         if not self._call_trigger(
-            self.left_rest_client, "left_rest_server/move_to_state"
+            self.left_rest_client, "/left_rest_server/move_to_state"
         ):
             self.get_logger().error("Left rest failed. Aborting workflow.")
             return

@@ -7,7 +7,8 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(ai_soft_touch_motion_planning_msgs REQUIRED)
+find_package(motion_planning_abstractions_msgs REQUIRED)
+find_package(open_set_object_detection_msgs REQUIRED)
 find_package(example_interfaces REQUIRED)
 find_package(geometry_msgs REQUIRED)
 # uncomment the following section in order to fill in

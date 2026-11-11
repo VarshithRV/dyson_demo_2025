@@ -1,2 +1,0 @@
-open_set_object_detection_msgs/ObjectPosition[] object_position
-sensor_msgs/Image image

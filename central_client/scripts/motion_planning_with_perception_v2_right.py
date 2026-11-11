@@ -7,7 +7,7 @@ import rclpy
 from rclpy.node import Node
 
 from example_interfaces.srv import Trigger
-from ai_soft_touch_motion_planning_msgs.srv import Pick
+from motion_planning_abstractions.srv import Pick
 from open_set_object_detection_msgs.srv import GetObjectLocations
 from std_msgs.msg import String
 from geometry_msgs.msg import PoseStamped
