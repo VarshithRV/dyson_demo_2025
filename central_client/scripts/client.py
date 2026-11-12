@@ -11,6 +11,7 @@ from motion_planning_abstractions_msgs.srv import Pick
 from open_set_object_detection_msgs.srv import GetObjectLocations
 from std_msgs.msg import String
 from geometry_msgs.msg import PoseStamped
+import time
 
 import cv2
 from cv_bridge import CvBridge
@@ -306,6 +307,9 @@ class CentralClientNode(Node):
             self.get_logger().error("Right preaction failed. Aborting workflow.")
             return
 
+        # sleep for a second
+        time.sleep(1.0)
+        
         # call right perception (global registration)
         self.get_logger().info("=== Step 3: right perception (global) ===")
         objects, annotated_image = self.call_right_perception()
